@@ -12,10 +12,10 @@ function StringParam({
   disabled,
 }: ParamProps) {
   const id = useId();
-  const [internalValue, setInternalValue] = useState(value);
+  const [internalValue, setInternalValue] = useState(value ?? "");
 
   useEffect(() => {
-    setInternalValue(value);
+    setInternalValue(value ?? "");
   }, [value]);
 
   let InputComponent: any = Input;
@@ -30,7 +30,7 @@ function StringParam({
       <InputComponent
         id={id}
         className="text-xs"
-        value={internalValue}
+        value={internalValue ?? ""}
         placeholder="Enter value here"
         onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
           updateNodeParamValue && updateNodeParamValue(e.target.value)

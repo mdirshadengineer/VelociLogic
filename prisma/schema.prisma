@@ -12,7 +12,7 @@ model Workflow {
   userId        String
   name          String
   description   String?
-  definition    String
+  definition    Json
   executionPlan String?
   creditsCost   Int                 @default(0)
   status        String
@@ -24,27 +24,38 @@ model Workflow {
   cron          String?
   nextRunAt     DateTime?
   executions    WorkflowExecution[]
+  versions      WorkflowVersion[]
 
   @@unique([name, userId])
+  @@index([userId])
+  @@index([status])
+  @@index([nextRunAt])
 }
 
 model WorkflowExecution {
-  id              String           @id @default(cuid())
-  workflowId      String
-  userId          String
-  trigger         String
-  status          String
-  createdAt       DateTime         @default(now())
-  startedAt       DateTime?
-  completedAt     DateTime?
-  creditsConsumed Int              @default(0)
-  definition      String           @default("{}")
-  phases          ExecutionPhase[]
-  workflow        Workflow         @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  id               String           @id @default(uuid())
+  workflowId       String
+  workflowVersionId String?        
+  userId           String
+  trigger          String
+  status           String
+  createdAt        DateTime         @default(now())
+  startedAt        DateTime?
+  completedAt      DateTime?
+  creditsConsumed  Int              @default(0)
+  definition       Json             @default("{}")
+  phases           ExecutionPhase[] 
+  workflow         Workflow         @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  workflowVersion  WorkflowVersion? @relation(fields: [workflowVersionId], references: [id], onDelete: SetNull)
+  logs             ExecutionLog[]   
+
+  @@index([workflowId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model ExecutionPhase {
-  id                  String    @id @default(cuid())
+  id                  String    @id @default(uuid())
   userId              String
   status              String
   number              Int
@@ -52,23 +63,29 @@ model ExecutionPhase {
   name                String
   startedAt           DateTime?
   completedAt         DateTime?
-  inputs              String?
-  outputs             String?
+  inputs              Json?
+  outputs             Json?
   creditsConsumed     Int?
   workflowExecutionId String
+  execution           WorkflowExecution @relation(fields: [workflowExecutionId], references: [id], onDelete: Cascade)
+  logs                ExecutionLog[]    
 
-  execution WorkflowExecution @relation(fields: [workflowExecutionId], references: [id], onDelete: Cascade)
-  logs      ExecutionLog[]
+  @@index([workflowExecutionId])
 }
 
 model ExecutionLog {
-  id        String   @id @default(cuid())
-  logLevel  String
-  message   String
-  timestamp DateTime @default(now())
+  id                   String   @id @default(uuid())
+  logLevel             String
+  message              String
+  timestamp            DateTime @default(now())
+  executionPhaseId     String
+  executionPhase       ExecutionPhase @relation(fields: [executionPhaseId], references: [id], onDelete: Cascade)
+  workflowExecutionId  String?
+  workflowExecution    WorkflowExecution? @relation(fields: [workflowExecutionId], references: [id], onDelete: SetNull)
 
-  executionPhaseId String
-  executionPhase   ExecutionPhase @relation(fields: [executionPhaseId], references: [id], onDelete: Cascade)
+  @@index([timestamp])
+  @@index([executionPhaseId])
+  @@index([workflowExecutionId])
 }
 
 model UserBalance {
@@ -77,21 +94,37 @@ model UserBalance {
 }
 
 model Credential {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   userId    String
   name      String
   value     String
   createdAt DateTime @default(now())
 
   @@unique([userId, name])
+  @@index([userId])
 }
 
 model UserPurchase {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   userId      String
   stripeId    String
   description String
   amount      Int
   currency    String
   date        DateTime @default(now())
+
+  @@index([userId])
+}
+
+model WorkflowVersion {
+  id          String   @id @default(uuid())
+  workflowId  String
+  version     Int
+  definition  Json
+  createdAt   DateTime @default(now())
+  workflow    Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  executions  WorkflowExecution[] 
+
+  @@unique([workflowId, version])
+  @@index([workflowId])
 }

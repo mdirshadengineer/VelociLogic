@@ -58,7 +58,7 @@ export async function createWorkflow(form: createWorkflowShemaType) {
     throw new Error("Failed to create workflow");
   }
 
-  redirect(`/workflow/editor/${result.id}`);
+  redirect(`/app/workflow/editor/${result.id}`);
 }
 
 export async function deleteWorkflow(workflowId: string) {
@@ -75,7 +75,7 @@ export async function deleteWorkflow(workflowId: string) {
     },
   });
 
-  revalidatePath("/workflows");
+  revalidatePath("/app/workflows");
 }
 
 export async function updateWorkFlow({
@@ -115,7 +115,7 @@ export async function updateWorkFlow({
       userId,
     },
   });
-  revalidatePath("/workflows");
+  revalidatePath("/app/workflows");
 }
 
 export async function getWorkflowExecutionWithPhases(executionId: string) {
@@ -174,7 +174,7 @@ export async function getWorkflowExecutions(workflowId: string) {
       userId,
     },
     orderBy: {
-      createdAt: "asc",
+      createdAt: "desc",
     },
   });
 }
@@ -266,7 +266,7 @@ export async function unPublishWorkflow(id: string) {
       creditsCost: 0,
     },
   });
-  revalidatePath(`/worflow/editor/${id}`);
+  revalidatePath(`/app/worflow/editor/${id}`);
 }
 
 export async function updateWorkFlowCron({
@@ -298,7 +298,7 @@ export async function updateWorkFlowCron({
     console.error(error.message);
     throw new Error("Invalid cron expression");
   }
-  revalidatePath("/workflows");
+  revalidatePath("/app/workflows");
 }
 
 export async function removeWorkflowSchedule(id: string) {
@@ -317,7 +317,7 @@ export async function removeWorkflowSchedule(id: string) {
       nextRunAt: null,
     },
   });
-  revalidatePath("/workflows");
+  revalidatePath("/app/workflows");
 }
 
 export async function duplicateWorkflow(form: duplicateWorkflowSchemaType) {
@@ -356,5 +356,5 @@ export async function duplicateWorkflow(form: duplicateWorkflowSchemaType) {
     throw new Error("Failed to duplicate workflow");
   }
 
-  redirect("/workflows");
+  redirect("/app/workflows");
 }

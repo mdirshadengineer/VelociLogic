@@ -22,6 +22,9 @@ async function WorkflowEditorPage({
       userId,
     },
   });
+
+  //console.log("workflow", workflow);
+
   if (!workflow) {
     return <div>Workflow not found</div>;
   }

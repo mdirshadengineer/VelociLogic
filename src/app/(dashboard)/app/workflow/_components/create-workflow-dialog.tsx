@@ -31,7 +31,10 @@ function CreateWorkflowDialog({ triggeredText }: { triggeredText?: string }) {
 
   const form = useForm<createWorkflowShemaType>({
     resolver: zodResolver(createWorkflowShema),
-    defaultValues: {},
+    defaultValues: {
+      name: "",
+      description: ""
+    },
   });
   const { mutate, isPending } = useMutation({
     mutationFn: createWorkflow,
@@ -83,7 +86,7 @@ function CreateWorkflowDialog({ triggeredText }: { triggeredText?: string }) {
                       Name <p className="text-xs text-primary">(required)</p>
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} value={field.value ?? ""} onChange={field.onChange} autoComplete="off" />
                     </FormControl>
                     <FormDescription>
                       Choose a descriptive and a unique name
@@ -104,7 +107,7 @@ function CreateWorkflowDialog({ triggeredText }: { triggeredText?: string }) {
                       </p>
                     </FormLabel>
                     <FormControl>
-                      <Textarea {...field} className="resize-none" />
+                      <Textarea  {...field} value={field.value ?? ""} onChange={field.onChange} className="resize-none" />
                     </FormControl>
                     <FormDescription>
                       Provide a brief description of what your workflow does.

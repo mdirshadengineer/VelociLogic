@@ -102,5 +102,5 @@ export async function runWorkflow(form: {
   // This will be a long running function, so just calling it and making it run in background
   executeWorkflow(execution.id);
 
-  redirect(`/workflow/runs/${workflowId}/${execution.id}`);
+  redirect(`/app/workflow/runs/${workflowId}/${execution.id}`);
 }
