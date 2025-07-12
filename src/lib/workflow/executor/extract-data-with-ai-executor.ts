@@ -5,7 +5,7 @@ import { symmetricDecrypt } from "src/lib/credential";
 import OpenAi from "openai";
 
 export async function ExtractDataWithAiExecutor(
-  enviornment: ExecutionEnviornment<typeof ExtractDataWithAiTask>
+  enviornment: ExecutionEnviornment<typeof ExtractDataWithAiTask>,
 ): Promise<boolean> {
   try {
     const credentialId = enviornment.getInput("Credentials");
@@ -67,13 +67,13 @@ export async function ExtractDataWithAiExecutor(
     });
 
     enviornment.log.info(
-      `Prompt tokens used: ${JSON.stringify(response.usage?.prompt_tokens)}`
+      `Prompt tokens used: ${JSON.stringify(response.usage?.prompt_tokens)}`,
     );
 
     enviornment.log.info(
       `Completition tokens used: ${JSON.stringify(
-        response.usage?.completion_tokens
-      )}`
+        response.usage?.completion_tokens,
+      )}`,
     );
 
     const result = response.choices[0].message?.content;

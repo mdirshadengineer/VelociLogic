@@ -1,16 +1,20 @@
-import { Suspense } from "react";
+import React, { Suspense } from "react";
+import prisma from "src/lib/prisma";
 import { getWorkflowExecutions } from "src/actions/workflows";
 import { InboxIcon, Loader2Icon } from "lucide-react";
-import {Topbar} from "../../_components/topbar";
+import { Topbar } from "../../_components/topbar";
 import ExecutionsTable from "./_components/executions-table";
+import { WorkflowVersion } from "@prisma/client";
 
-async function ExecutionsTableWrapper({ workflowId }: { workflowId: string }) {
+interface ExecutionsTableWrapperProps {
+  workflowId: string;
+}
+
+async function ExecutionsTableWrapper({
+  workflowId,
+}: ExecutionsTableWrapperProps) {
   const executions = await getWorkflowExecutions(workflowId);
-
-  if (!executions) {
-    return <div>No executions found</div>;
-  }
-
+  if (!executions) return <div>No executions found</div>;
   if (executions.length === 0) {
     return (
       <div className="container w-full py-6">
@@ -23,7 +27,7 @@ async function ExecutionsTableWrapper({ workflowId }: { workflowId: string }) {
               No runs have been triggered yet for this workflow
             </p>
             <p className="text-sm text-muted-foreground">
-              You can triger new run in the editor page
+              You can trigger a new run in the editor page
             </p>
           </div>
         </div>
@@ -37,14 +41,22 @@ async function ExecutionsTableWrapper({ workflowId }: { workflowId: string }) {
   );
 }
 
-export default async function ExecutionsPage({
-  params,
-}: {
-  params: {
-    workflowId: string;
-  };
-}) {
+interface ExecutionsPageProps {
+  params: Promise<{ workflowId: string }>;
+}
+
+export default async function ExecutionsPage({ params }: ExecutionsPageProps) {
   const { workflowId } = await params;
+  const versions: WorkflowVersion[] = await prisma.workflowVersion.findMany({
+    where: { workflowId },
+    orderBy: { version: "desc" },
+  });
+  const initialDefinition = versions[0]
+    ? typeof versions[0].definition === "string"
+      ? versions[0].definition
+      : JSON.stringify(versions[0].definition)
+    : "";
+
   return (
     <div className="h-full w-full overflow-auto">
       <Topbar
@@ -52,6 +64,8 @@ export default async function ExecutionsPage({
         hideButtons
         title="All runs"
         subtitle="List of all your workflows run"
+        versions={versions}
+        initialDefinition={initialDefinition}
       />
       <Suspense
         fallback={

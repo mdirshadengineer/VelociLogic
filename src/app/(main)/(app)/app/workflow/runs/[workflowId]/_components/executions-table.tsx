@@ -1,7 +1,10 @@
 "use client";
-import { getWorkflowExecutions } from "src/actions/workflows";
-import { useQuery } from "@tanstack/react-query";
+
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { formatDistanceToNow } from "date-fns";
+import { CoinsIcon } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -11,30 +14,28 @@ import {
   TableHeader,
   TableRow,
 } from "shared/ui/table";
-import { datesToDurationString } from "src/lib/helper";
 import { Badge } from "shared/ui/badge";
+import { getWorkflowExecutions } from "src/actions/workflows";
+import { datesToDurationString } from "src/lib/helper";
 import ExecutionStatusIndicator from "./execution-status-indicator";
 import { WorkflowExecutionStatus } from "src/lib/types";
-import { Coins, CoinsIcon } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { useRouter } from "next/navigation";
+
+// Types
 
 type InitialData = Awaited<ReturnType<typeof getWorkflowExecutions>>;
 
-function ExecutionsTable({
-  workflowId,
-  initialData,
-}: {
+interface ExecutionsTableProps {
   workflowId: string;
   initialData: InitialData;
-}) {
+}
+
+function ExecutionsTable({ workflowId, initialData }: ExecutionsTableProps) {
   const query = useQuery({
     queryKey: ["executions", workflowId],
     initialData,
     queryFn: () => getWorkflowExecutions(workflowId),
     refetchInterval: 5000,
   });
-
   const router = useRouter();
 
   return (
@@ -54,20 +55,18 @@ function ExecutionsTable({
           {query.data.map((execution) => {
             const duration = datesToDurationString(
               execution.completedAt,
-              execution.startedAt
+              execution.startedAt,
             );
-
             const formattedStartedAt =
               execution.startedAt &&
               formatDistanceToNow(execution.startedAt, { addSuffix: true });
-
             return (
               <TableRow
                 key={execution.id}
                 className="cursor-pointer"
                 onClick={() => {
                   router.push(
-                    `/app/workflow/runs/${execution.workflowId}/${execution.id}`
+                    `/app/workflow/runs/${execution.workflowId}/${execution.id}`,
                   );
                 }}
               >
@@ -75,8 +74,8 @@ function ExecutionsTable({
                   <div className="flex flex-col">
                     <span className="font-semibold">{execution.id}</span>
                     <div className="text-muted-foreground text-xs flex gap-1 items-center">
-                      <span className="">Triggered via</span>
-                      <Badge variant={"outline"}>{execution.trigger}</Badge>
+                      <span>Triggered via</span>
+                      <Badge variant="outline">{execution.trigger}</Badge>
                     </div>
                   </div>
                 </TableCell>

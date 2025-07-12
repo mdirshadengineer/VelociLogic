@@ -5,31 +5,21 @@ import {
   ShieldCheckIcon,
 } from "lucide-react";
 
+/**
+ * Navigation routes for the sidebar or main navigation.
+ */
 export const routes = [
-  {
-    href: "/home",
-    label: "Home",
-    icon: HomeIcon,
-  },
-  {
-    href: "/workflows",
-    label: "Workflows",
-    icon: Layers2Icon,
-  },
-  {
-    href: "/credentials",
-    label: "Credentials",
-    icon: ShieldCheckIcon,
-  },
-  {
-    href: "/billing",
-    label: "Billing",
-    icon: CoinsIcon,
-  },
+  { href: "/home", label: "Home", icon: HomeIcon },
+  { href: "/workflows", label: "Workflows", icon: Layers2Icon },
+  { href: "/credentials", label: "Credentials", icon: ShieldCheckIcon },
+  { href: "/billing", label: "Billing", icon: CoinsIcon },
 ];
 
+/**
+ * Month names for date pickers or analytics.
+ */
 export const MONTH_NAME = [
-  "Janauary",
+  "January",
   "February",
   "March",
   "April",
@@ -43,26 +33,20 @@ export const MONTH_NAME = [
   "December",
 ];
 
+/**
+ * Words for the typewriter animation on the landing page.
+ */
 export const typeWriterWords = [
-  {
-    text: "Build",
-  },
-  {
-    text: "Powerful",
-  },
-  {
-    text: "Web",
-    className: "text-primary dark:text-primary",
-  },
-  {
-    text: "Scraping",
-    className: "text-primary dark:text-primary",
-  },
-  {
-    text: "Workflows.",
-  },
+  { text: "Build" },
+  { text: "Powerful" },
+  { text: "Web", className: "text-primary dark:text-primary" },
+  { text: "Scraping", className: "text-primary dark:text-primary" },
+  { text: "Workflows." },
 ];
 
+/**
+ * Steps for the "How it works" section.
+ */
 export const howItWorks = [
   {
     title: "Build Your Workflow",
@@ -74,7 +58,6 @@ export const howItWorks = [
     description:
       "Extract data efficiently from any web page using advanced tools, including AI-powered data extraction.",
   },
-
   {
     title: "Automate and Optimize",
     description:
@@ -87,30 +70,19 @@ export const howItWorks = [
   },
 ];
 
+/**
+ * Header navigation routes for the landing page.
+ */
 export const headerRoutes = [
-  {
-    title: "How it works",
-    href: "#howItWorks",
-    className: "",
-  },
-  {
-    title: "Scraping Features",
-    href: "#scrapingFeatures",
-    className: "",
-  },
-  {
-    title: "Pricing",
-    href: "#pricing",
-    className: "",
-  },
-  {
-    title: "Get Started",
-    href: "/sign-in",
-    className: "",
-    button: true,
-  },
+  { title: "How it works", href: "#howItWorks", className: "" },
+  { title: "Scraping Features", href: "#scrapingFeatures", className: "" },
+  { title: "Pricing", href: "#pricing", className: "" },
+  { title: "Get Started", href: "/sign-in", className: "", button: true },
 ];
 
+/**
+ * Pricing plans for the billing page.
+ */
 export const pricingPlans = [
   {
     title: "Small Pack",

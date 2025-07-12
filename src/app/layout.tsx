@@ -4,6 +4,7 @@ import "src/app/globals.css";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import RootProviders from "./provider";
+import { Toaster } from "sonner";
 
 const figtree = Figtree({
   variable: "--font-figtree",
@@ -36,6 +37,7 @@ export default function RootLayout({
           <RootProviders>
             <main>{children}</main>
           </RootProviders>
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

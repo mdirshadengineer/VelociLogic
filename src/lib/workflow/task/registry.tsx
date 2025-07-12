@@ -1,3 +1,4 @@
+// Task registry for mapping TaskType to their implementation and metadata.
 import { TaskType, WorkflowTask } from "src/lib/types";
 import { LaunchBrowserTask } from "./launch-browser";
 import { PageToHtmlTask } from "./page-to-html";
@@ -12,6 +13,10 @@ import { AddPropertyToJsonTask } from "./add-property-to-json";
 import { NavigateUrlTask } from "./navigate-url";
 import { ScrollToElementTask } from "./scroll-to-element";
 
+/**
+ * Registry mapping each TaskType to its corresponding WorkflowTask implementation.
+ * Ensures type safety and centralizes task definitions for workflow execution.
+ */
 type Registry = {
   [key in TaskType]: WorkflowTask & { type: key };
 };

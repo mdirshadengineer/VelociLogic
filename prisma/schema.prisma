@@ -23,10 +23,12 @@ model Workflow {
   updatedAt     DateTime            @updatedAt
   cron          String?
   nextRunAt     DateTime?
+  publishedVersionId String? // Points to the published WorkflowVersion
+  publishedVersion   WorkflowVersion? @relation("PublishedVersion", fields: [publishedVersionId], references: [id])
   executions    WorkflowExecution[]
   versions      WorkflowVersion[]
 
-  @@unique([name, userId])
+  @@unique([id, userId])
   @@index([userId])
   @@index([status])
   @@index([nextRunAt])
@@ -124,6 +126,7 @@ model WorkflowVersion {
   createdAt   DateTime @default(now())
   workflow    Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
   executions  WorkflowExecution[] 
+  publishedFor Workflow[] @relation("PublishedVersion")
 
   @@unique([workflowId, version])
   @@index([workflowId])

@@ -1,10 +1,10 @@
 "use client";
 
-import { buttonVariants } from "shared/ui/button";
-import { Card, CardContent } from "shared/ui/card";
-import { WorkflowExecutionStatus, WorkflowStatus } from "src/lib/types";
-import { cn } from "shared/lib/utils";
+import React from "react";
+import Link from "next/link";
 import { Workflow } from "@prisma/client";
+import { format, formatDistanceToNow } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 import {
   ChevronRightIcon,
   ClockIcon,
@@ -15,25 +15,29 @@ import {
   PlayIcon,
   ShuffleIcon,
 } from "lucide-react";
-import Link from "next/link";
-import React from "react";
+import { WorkflowExecutionStatus, WorkflowStatus } from "src/lib/types";
+import { cn } from "shared/lib/utils";
+import { buttonVariants } from "shared/ui/button";
+import { Card, CardContent } from "shared/ui/card";
+import { Badge } from "shared/ui/badge";
+import TooltipWrapper from "shared/tooltip-wrapper";
 import WorkflowActions from "./workflow-action";
 import RunButton from "./run-button";
 import SchedulerDialog from "./scheduler-dialog";
-import TooltipWrapper from "shared/tooltip-wrapper";
-import { Badge } from "shared/ui/badge";
+import DuplicateWorkflowDialog from "./duplicate-workflow-dialog";
 // import ExecutionStatusIndicator, {
 //   ExecutionStatusLabel,
 // } from "@/app/workflow/runs/[workflowId]/_components/ExecutionStatusIndicator";
-import { format, formatDistanceToNow } from "date-fns";
-import { formatInTimeZone } from "date-fns-tz";
-import DuplicateWorkflowDialog from "./duplicate-workflow-dialog";
 
 const statusColor = {
   [WorkflowStatus.DRAFT]: "bg-yellow-400 text-yellow-600",
   [WorkflowStatus.PUBLISHED]: "bg-primary",
 };
 
+/**
+ * Card component for displaying a workflow with actions and status.
+ * @param workflow - The workflow object to display
+ */
 function WorkflowCard({ workflow }: { workflow: Workflow }) {
   const isDraft = workflow.status === WorkflowStatus.DRAFT;
   return (
@@ -103,6 +107,9 @@ function WorkflowCard({ workflow }: { workflow: Workflow }) {
 
 export default WorkflowCard;
 
+/**
+ * Section for displaying and managing workflow schedule and credits.
+ */
 function SchedulerSection({
   isDraft,
   creditsCost,
@@ -140,6 +147,9 @@ function SchedulerSection({
   );
 }
 
+/**
+ * Section for displaying last run and next scheduled run details.
+ */
 function LastRunDetails({ workflow }: { workflow: Workflow }) {
   const isDraft = workflow.status === WorkflowStatus.DRAFT;
 

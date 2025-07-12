@@ -1,3 +1,7 @@
+import { Fragment, useState } from "react";
+
+import { TrashIcon, MoreVerticalIcon } from "lucide-react";
+
 import TooltipWrapper from "shared/tooltip-wrapper";
 import { Button } from "shared/ui/button";
 import {
@@ -8,10 +12,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "shared/ui/dropdown-menu";
-import { MoreVerticalIcon, TrashIcon } from "lucide-react";
-import { Fragment, useState } from "react";
+
 import DeleteWorkflowDialog from "./delete-workflow-dialog";
 
+/**
+ * Actions dropdown for a workflow card, including delete functionality.
+ * @param workflowName - Name of the workflow
+ * @param workflowId - ID of the workflow
+ */
 function WorkflowActions({
   workflowName,
   workflowId,

@@ -2,7 +2,7 @@ import { ExecutionEnviornment } from "src/lib/types";
 import { WaitForElementTask } from "../task/wait-for-element";
 
 export async function WaitForElementExecutor(
-  enviornment: ExecutionEnviornment<typeof WaitForElementTask>
+  enviornment: ExecutionEnviornment<typeof WaitForElementTask>,
 ): Promise<boolean> {
   try {
     const selector = enviornment.getInput("Selector");

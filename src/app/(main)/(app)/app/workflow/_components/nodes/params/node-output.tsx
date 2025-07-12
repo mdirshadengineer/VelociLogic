@@ -1,10 +1,18 @@
+import React from "react";
+import { Handle, Position } from "@xyflow/react";
 import { TaskParam } from "src/lib/types";
 import { cn } from "shared/lib/utils";
-import { Handle, Position } from "@xyflow/react";
-import React from "react";
 import { ColorForHandle } from "../common";
 
-function NodeOutput({ output }: { output: TaskParam }) {
+interface NodeOutputProps {
+  output: TaskParam;
+}
+
+/**
+ * Renders an output handle for a workflow node in the visual editor.
+ * @param output - The output parameter for the node
+ */
+function NodeOutput({ output }: NodeOutputProps) {
   return (
     <div className="flex justify-end relative p-3 bg-secondary">
       <p className="text-xs text-muted-foreground">{output.name}</p>

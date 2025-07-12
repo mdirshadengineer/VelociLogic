@@ -1,33 +1,40 @@
-import { Calendar } from "lucide-react";
-import CreateWorkflowDialog from "./_components/create-workflow-dialog";
 import { Suspense } from "react";
+import { Calendar } from "lucide-react";
+
+import CreateWorkflowDialog from "./_components/create-workflow-dialog";
 import UserWorkflowSkeleton from "./_components/user-workflow-skeleton";
 import UserWorkflows from "./_components/user-workflow";
 
-/** Tell Next.js to execute this file on every request so `new Date()` is always current. */
-export const dynamic = "force-dynamic"; //  ⟶ disables static optimisation / caches
+/**
+ * Tell Next.js to execute this file on every request so `new Date()` is always current.
+ */
+export const dynamic = "force-dynamic"; // disables static optimisation / caches
 
-/** Utility ─ keeps logic outside the component for clarity */
+/**
+ * Utility to get the current formatted date for the dashboard header.
+ */
 function getFormattedDate() {
   const now = new Date();
-
-  const day = now.getDate(); // 5
+  const day = now.getDate();
   const weekday = new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(
     now,
-  ); // Sat
-  const month = new Intl.DateTimeFormat("en-US", { month: "long" }).format(now); // July
-
+  );
+  const month = new Intl.DateTimeFormat("en-US", { month: "long" }).format(now);
   return { day, weekday, month };
 }
+
+/**
+ * Workflow dashboard page for listing and managing user workflows.
+ */
 export default async function WorkflowDashboardPage() {
   const { day, weekday, month } = getFormattedDate();
 
   return (
     <div id="workflow-dashboard" className="w-full h-full">
       <div className="flex h-full w-full flex-1 flex-col gap-2 rounded-tl-2xl border border-neutral-200 bg-gray-100 p-2 md:p-10 dark:border-neutral-700 dark:bg-neutral-900">
-        <section id="">
+        <section>
           <div className="flex items-center justify-between">
-            <div className="flex items-center justify-between  rounded-full px-4 py-2 w-fit gap-6">
+            <div className="flex items-center justify-between rounded-full px-4 py-2 w-fit gap-6">
               {/* Left Date */}
               <div className="flex items-center gap-3">
                 <div className="flex flex-col items-center w-[64px] h-[64px] ring-1 ring-gray-300 dark:ring-gray-800 justify-center rounded-full">
@@ -42,10 +49,8 @@ export default async function WorkflowDashboardPage() {
                   </span>
                 </div>
               </div>
-
               {/* Divider */}
               <div className="h-6 w-px bg-gray-300" />
-
               {/* Button + Icon */}
               <div className="flex items-center gap-2">
                 <button className="bg-[#EB5E28] text-white rounded-full px-4 py-2 flex items-center gap-2 hover:bg-[#d44f1e] transition-all">
@@ -65,7 +70,6 @@ export default async function WorkflowDashboardPage() {
                     />
                   </svg>
                 </button>
-
                 <button className="ring-1 ring-gray-300 dark:ring-gray-800 rounded-full p-4">
                   <Calendar className="h-5 w-5 text-gray-800 dark:text-white" />
                 </button>
@@ -77,7 +81,7 @@ export default async function WorkflowDashboardPage() {
             </div>
           </div>
         </section>
-        <section id="">
+        <section>
           <div>
             <div className="h-full py-6">
               {/* Show workflow list */}

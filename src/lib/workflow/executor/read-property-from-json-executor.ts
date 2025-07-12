@@ -2,7 +2,7 @@ import { ExecutionEnviornment } from "src/lib/types";
 import { ReadPropertyFromJsonTask } from "../task/read-property-from-json";
 
 export async function ReadPropertyFromJsonExecutor(
-  enviornment: ExecutionEnviornment<typeof ReadPropertyFromJsonTask>
+  enviornment: ExecutionEnviornment<typeof ReadPropertyFromJsonTask>,
 ): Promise<boolean> {
   try {
     let jsonData = enviornment.getInput("JSON");

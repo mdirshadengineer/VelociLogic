@@ -1,16 +1,30 @@
 import { z } from "zod";
 
-export const createWorkflowShema = z.object({
+/**
+ * Zod schema for creating a workflow.
+ * - name: string, max 50 chars
+ * - description: string, max 80 chars, optional
+ */
+export const createWorkflowSchema = z.object({
   name: z.string().max(50),
   description: z.string().max(80).optional(),
 });
 
-export type createWorkflowShemaType = z.infer<typeof createWorkflowShema>;
+/**
+ * Type for createWorkflowSchema
+ */
+export type CreateWorkflowSchemaType = z.infer<typeof createWorkflowSchema>;
 
-export const duplicateWorkflowSchema = createWorkflowShema.extend({
+/**
+ * Zod schema for duplicating a workflow (extends createWorkflowSchema with workflowId).
+ */
+export const duplicateWorkflowSchema = createWorkflowSchema.extend({
   workflowId: z.string(),
 });
 
-export type duplicateWorkflowSchemaType = z.infer<
+/**
+ * Type for duplicateWorkflowSchema
+ */
+export type DuplicateWorkflowSchemaType = z.infer<
   typeof duplicateWorkflowSchema
 >;

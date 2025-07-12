@@ -1,10 +1,19 @@
 "use client";
+
+import React, { useEffect, useId, useState } from "react";
 import { Input } from "shared/ui/input";
 import { Label } from "shared/ui/label";
 import { Textarea } from "shared/ui/textarea";
 import { ParamProps } from "src/lib/types";
-import React, { useEffect, useId, useState } from "react";
 
+/**
+ * Parameter component for entering a string value in a workflow node.
+ * Supports both input and textarea variants.
+ * @param param - The parameter object
+ * @param value - The current value of the parameter
+ * @param updateNodeParamValue - Callback to update the node parameter value
+ * @param disabled - Whether the input is disabled
+ */
 function StringParam({
   param,
   value,
@@ -18,26 +27,25 @@ function StringParam({
     setInternalValue(value ?? "");
   }, [value]);
 
-  let InputComponent: any = Input;
-  if (param.variant === "textarea") InputComponent = Textarea;
+  const InputComponent = param.variant === "textarea" ? Textarea : Input;
 
   return (
-    <div className="space-y-1 p1- w-full">
+    <div className="space-y-1 w-full">
       <Label htmlFor={id} className="text-xs flex">
         {param.name}
-        {param.required && <p className="text-red-400 px-2">*</p>}
+        {param.required && <span className="text-red-400 px-2">*</span>}
       </Label>
       <InputComponent
         id={id}
         className="text-xs"
-        value={internalValue ?? ""}
+        value={internalValue}
         placeholder="Enter value here"
-        onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
-          updateNodeParamValue && updateNodeParamValue(e.target.value)
-        }
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setInternalValue(e.target.value)
-        }
+        onBlur={(
+          e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+        ) => updateNodeParamValue && updateNodeParamValue(e.target.value)}
+        onChange={(
+          e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+        ) => setInternalValue(e.target.value)}
         disabled={disabled}
       />
       {param.helperText && (

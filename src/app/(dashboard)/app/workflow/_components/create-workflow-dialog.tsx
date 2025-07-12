@@ -1,6 +1,17 @@
 "use client";
 
+import { useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Layers2Icon, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+
 import { createWorkflow } from "src/actions/workflows";
+import {
+  createWorkflowSchema,
+  CreateWorkflowSchemaType,
+} from "src/schema/workflows";
 import CustomDialogHeader from "shared/custom-dialog-header";
 import { Button } from "shared/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "shared/ui/dialog";
@@ -15,25 +26,20 @@ import {
 } from "shared/ui/form";
 import { Input } from "shared/ui/input";
 import { Textarea } from "shared/ui/textarea";
-import {
-  createWorkflowShema,
-  createWorkflowShemaType,
-} from "src/schema/workflows";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { Layers2Icon, Loader2 } from "lucide-react";
-import { useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
+/**
+ * Dialog component for creating a new workflow.
+ * Handles form validation, submission, and feedback.
+ * @param triggeredText - Optional text for the dialog trigger button
+ */
 function CreateWorkflowDialog({ triggeredText }: { triggeredText?: string }) {
   const [open, setOpen] = useState(false);
 
-  const form = useForm<createWorkflowShemaType>({
-    resolver: zodResolver(createWorkflowShema),
+  const form = useForm<CreateWorkflowSchemaType>({
+    resolver: zodResolver(createWorkflowSchema),
     defaultValues: {
       name: "",
-      description: ""
+      description: "",
     },
   });
   const { mutate, isPending } = useMutation({
@@ -41,13 +47,13 @@ function CreateWorkflowDialog({ triggeredText }: { triggeredText?: string }) {
     onSuccess: () => {
       toast.success("Workflow created", { id: "create-workflow" });
     },
-    onError: (error) => {
+    onError: () => {
       toast.error("Failed to create workflow", { id: "create-workflow" });
     },
   });
 
   const onSubmit = useCallback(
-    (values: createWorkflowShemaType) => {
+    (values: CreateWorkflowSchemaType) => {
       toast.loading("Creating workflow...", { id: "create-workflow" });
       mutate(values);
     },
@@ -86,7 +92,12 @@ function CreateWorkflowDialog({ triggeredText }: { triggeredText?: string }) {
                       Name <p className="text-xs text-primary">(required)</p>
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} value={field.value ?? ""} onChange={field.onChange} autoComplete="off" />
+                      <Input
+                        {...field}
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        autoComplete="off"
+                      />
                     </FormControl>
                     <FormDescription>
                       Choose a descriptive and a unique name
@@ -103,11 +114,16 @@ function CreateWorkflowDialog({ triggeredText }: { triggeredText?: string }) {
                     <FormLabel className="flex gap-1 items-center">
                       Description{" "}
                       <p className="text-xs text-muted-foreground">
-                        (optinoal)
+                        (optional)
                       </p>
                     </FormLabel>
                     <FormControl>
-                      <Textarea  {...field} value={field.value ?? ""} onChange={field.onChange} className="resize-none" />
+                      <Textarea
+                        {...field}
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        className="resize-none"
+                      />
                     </FormControl>
                     <FormDescription>
                       Provide a brief description of what your workflow does.

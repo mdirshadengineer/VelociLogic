@@ -1,16 +1,21 @@
+import React, { memo } from "react";
 import { NodeProps } from "@xyflow/react";
-import { memo } from "react";
+import { Badge } from "shared/ui/badge";
 import NodeCard from "./node-card";
 import NodeHeader from "./node-header";
-import { AppNodeData } from "src/lib/types";
-import { TaskRegistry } from "src/lib/workflow/task/registry";
 import NodeInput from "./node-input";
 import NodeOutput from "./params/node-output";
 import NodeIO from "./node-io";
-import { Badge } from "shared/ui/badge";
+import { AppNodeData } from "src/lib/types";
+import { TaskRegistry } from "src/lib/workflow/task/registry";
 
 const DEV_MODE = process?.env?.NEXT_PUBLIC_DEV_MODE === "true";
 
+/**
+ * Visual workflow node component for React Flow.
+ * Renders node header, inputs, and outputs using the task registry.
+ * @param props - NodeProps from React Flow
+ */
 const NodeComponent = memo((props: NodeProps) => {
   const nodeData = props.data as AppNodeData;
   const task = TaskRegistry[nodeData.type];
@@ -33,5 +38,5 @@ const NodeComponent = memo((props: NodeProps) => {
   );
 });
 
-export default NodeComponent;
 NodeComponent.displayName = "NodeComponent";
+export default NodeComponent;

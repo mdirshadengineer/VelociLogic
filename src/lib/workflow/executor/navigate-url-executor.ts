@@ -2,7 +2,7 @@ import { ExecutionEnviornment } from "src/lib/types";
 import { NavigateUrlTask } from "../task/navigate-url";
 
 export async function NavigateUrlExecutor(
-  enviornment: ExecutionEnviornment<typeof NavigateUrlTask>
+  enviornment: ExecutionEnviornment<typeof NavigateUrlTask>,
 ): Promise<boolean> {
   try {
     const url = enviornment.getInput("Url");

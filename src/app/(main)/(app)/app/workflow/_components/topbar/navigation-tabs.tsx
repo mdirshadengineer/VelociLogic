@@ -1,13 +1,20 @@
 "use client";
 
 import React from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "shared/ui/tabs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Tabs, TabsList, TabsTrigger } from "shared/ui/tabs";
 
-function NavigationTabs({ workflowId }: { workflowId: string }) {
+interface NavigationTabsProps {
+  workflowId: string;
+}
+
+/**
+ * Navigation tabs for switching between workflow editor and runs views.
+ * @param workflowId - The workflow's unique ID
+ */
+function NavigationTabs({ workflowId }: NavigationTabsProps) {
   const pathname = usePathname();
-
   const activeValue = pathname.split("/")[3];
 
   return (

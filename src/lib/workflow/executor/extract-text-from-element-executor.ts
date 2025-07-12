@@ -3,7 +3,7 @@ import * as cheerio from "cheerio";
 import { ExtractTextFromElementTask } from "../task/extract-text-from-element";
 
 export async function ExtractTextFromElementExecutor(
-  enviornment: ExecutionEnviornment<typeof ExtractTextFromElementTask>
+  enviornment: ExecutionEnviornment<typeof ExtractTextFromElementTask>,
 ): Promise<boolean> {
   try {
     const selector = enviornment.getInput("Selector");

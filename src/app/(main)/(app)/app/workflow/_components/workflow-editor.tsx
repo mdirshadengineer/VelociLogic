@@ -1,17 +1,7 @@
 "use client";
 
 import "@xyflow/react/dist/style.css";
-
-import type { AppNode, TaskType } from "src/lib/types";
-
-import type { Connection, Edge } from "@xyflow/react";
-
-import { Workflow } from "@prisma/client";
-
 import React, { useEffect, useCallback } from "react";
-
-import { createWorkflowNode } from "src/lib/workflow/create-workflow-node";
-
 import {
   ReactFlow,
   Controls,
@@ -23,38 +13,38 @@ import {
   addEdge,
   getOutgoers,
 } from "@xyflow/react";
+import { Workflow } from "@prisma/client";
+import type { AppNode, TaskType } from "src/lib/types";
+import type { Connection, Edge } from "@xyflow/react";
 import NodeComponent from "./nodes/node-component";
 import DeletableEdge from "./edges/deleteable-edge";
+import { createWorkflowNode } from "src/lib/workflow/create-workflow-node";
 import { TaskRegistry } from "src/lib/workflow/task/registry";
 
-const snapgird: [number, number] = [50, 50];
-
+const snapGrid: [number, number] = [50, 50];
 const fitViewOptions = { padding: 1 };
+const nodeTypes = { VelociLogicNode: NodeComponent };
+const edgeTypes = { default: DeletableEdge };
 
-const nodeTypes = {
-  VelociLogicNode: NodeComponent,
-};
-const edgeTypes = {
-  default: DeletableEdge,
-};
+interface WorkflowEditorProps {
+  workflow: Workflow;
+  isPublished: boolean;
+}
 
-function WorkflowEditor({ workflow }: { workflow: Workflow }) {
+function WorkflowEditor({ workflow, isPublished }: WorkflowEditorProps) {
   const [nodes, setNodes, onNodeChange] = useNodesState<AppNode>([]);
   const [edges, setEdges, onEdgeChange] = useEdgesState<Edge>([]);
   const { setViewport, screenToFlowPosition, updateNodeData } = useReactFlow();
 
   useEffect(() => {
     try {
-      const flow = JSON.parse(workflow.definition);
+      const flow = JSON.parse(workflow.definition as string);
       if (!flow) return;
       setNodes(flow.nodes || []);
       setEdges(flow.edges || []);
-
-      //TODO:  Optional flow for restoring the view-port used by user for project
-      // if (!flow.viewport) return;
-      // const { x = 0, y = 0, zoom = 1 } = flow.viewport;
-      // setViewport({ x, y, zoom });
-    } catch (err) {}
+      // Optionally restore viewport
+      // if (flow.viewport) setViewport(flow.viewport);
+    } catch {}
   }, [workflow, setEdges, setNodes, setViewport]);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
@@ -66,13 +56,11 @@ function WorkflowEditor({ workflow }: { workflow: Workflow }) {
     (event: React.DragEvent) => {
       event.preventDefault();
       const taskType = event.dataTransfer.getData("application/reactflow");
-      if (typeof taskType == undefined || !taskType) return;
-
+      if (!taskType) return;
       const position = screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
-
       const newNode = createWorkflowNode(taskType as TaskType, position);
       setNodes((nds) => nds.concat(newNode));
     },
@@ -98,49 +86,30 @@ function WorkflowEditor({ workflow }: { workflow: Workflow }) {
 
   const isValidConnection = useCallback(
     (connection: Edge | Connection) => {
-      // No self-connection
       if (connection.source === connection.target) return false;
-
-      // Same type connections
       const sourceNode = nodes.find((node) => node.id === connection.source);
       const targetNode = nodes.find((node) => node.id === connection.target);
-
-      if (!sourceNode || !targetNode) {
-        console.log("Source or target not found");
-        return false;
-      }
-
+      if (!sourceNode || !targetNode) return false;
       const sourceTask = TaskRegistry[sourceNode.data.type];
       const targetTask = TaskRegistry[targetNode.data.type];
-
       const output = sourceTask.outputs.find(
         (o) => o.name === connection.sourceHandle,
       );
       const input = targetTask.inputs.find(
         (i) => i.name === connection.targetHandle,
       );
-
-      if (input?.type !== output?.type) {
-        console.log("Invalid connection");
-        return false;
-      }
-
-      // Avoid cyclic connections :: DOCS_GRAPH
-      const hasCycle = (node: AppNode, visited = new Set()) => {
+      if (input?.type !== output?.type) return false;
+      // Avoid cyclic connections
+      const hasCycle = (node: AppNode, visited = new Set<string>()) => {
         if (visited.has(node.id)) return false;
-
         visited.add(node.id);
-
         for (const outgoer of getOutgoers(node, nodes, edges)) {
           if (outgoer.id === connection.source) return true;
           if (hasCycle(outgoer, visited)) return true;
         }
       };
-
-      const detectedCycle = hasCycle(targetNode);
-      return !detectedCycle;
+      return !hasCycle(targetNode);
     },
-
     [nodes, edges],
   );
 
@@ -149,18 +118,18 @@ function WorkflowEditor({ workflow }: { workflow: Workflow }) {
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        onNodesChange={onNodeChange}
-        onEdgesChange={onEdgeChange}
+        onNodesChange={isPublished ? undefined : onNodeChange}
+        onEdgesChange={isPublished ? undefined : onEdgeChange}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         snapToGrid
-        snapGrid={snapgird}
+        snapGrid={snapGrid}
         fitView
         fitViewOptions={fitViewOptions}
-        onDragOver={onDragOver}
-        onDrop={onDrop}
-        onConnect={onConnect}
-        isValidConnection={isValidConnection}
+        onDragOver={isPublished ? undefined : onDragOver}
+        onDrop={isPublished ? undefined : onDrop}
+        onConnect={isPublished ? undefined : onConnect}
+        isValidConnection={isPublished ? undefined : isValidConnection}
       >
         <Controls position="top-left" fitViewOptions={fitViewOptions} />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />

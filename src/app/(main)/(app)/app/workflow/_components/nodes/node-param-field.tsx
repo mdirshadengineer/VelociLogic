@@ -1,25 +1,30 @@
 "use client";
 
-import { Input } from "shared/ui/input";
-import { AppNode, TaskParam, TaskParamType } from "src/lib/types";
 import React, { useCallback } from "react";
-import StringParam from "./params/string-param";
 import { useReactFlow } from "@xyflow/react";
+import { AppNode, TaskParam, TaskParamType } from "src/lib/types";
+import StringParam from "./params/string-param";
 import BrowserInstance from "./params/browser-instance";
 import SelectParam from "./params/select-param";
 import CredentialsParam from "./params/credentials-param";
 
-function NodeParamField({
-  param,
-  nodeId,
-  disabled,
-}: {
+interface NodeParamFieldProps {
   param: TaskParam;
   nodeId: string;
   disabled: boolean;
-}) {
+}
+
+/**
+ * Renders the appropriate parameter input field for a workflow node based on type.
+ * Handles updating node data in React Flow.
+ * @param param - The parameter definition
+ * @param nodeId - The node's unique ID
+ * @param disabled - Whether the input is disabled
+ */
+function NodeParamField({ param, nodeId, disabled }: NodeParamFieldProps) {
   const { updateNodeData, getNode } = useReactFlow();
   const node = getNode(nodeId) as AppNode;
+  const value = node?.data?.inputs?.[param.name];
 
   const updateNodeParamValue = useCallback(
     (newValue: string) => {
@@ -32,8 +37,6 @@ function NodeParamField({
     },
     [updateNodeData, param.name, node?.data?.inputs, nodeId],
   );
-
-  const value = node?.data?.inputs?.[param.name];
 
   switch (param.type) {
     case TaskParamType.STRING:
@@ -69,7 +72,6 @@ function NodeParamField({
           value={value}
         />
       );
-
     default:
       return (
         <div className="w-full">

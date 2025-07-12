@@ -1,9 +1,12 @@
 "use client";
 
-import {
-  removeWorkflowSchedule,
-  updateWorkFlowCron,
-} from "src/actions/workflows";
+import { useEffect, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { CalendarIcon, ClockIcon, TriangleAlertIcon } from "lucide-react";
+import { toast } from "sonner";
+import cronstrue from "cronstrue";
+import parser from "cron-parser";
+import { cn } from "shared/lib/utils";
 import CustomDialogHeader from "shared/custom-dialog-header";
 import { Button } from "shared/ui/button";
 import {
@@ -14,16 +17,18 @@ import {
   DialogTrigger,
 } from "shared/ui/dialog";
 import { Input } from "shared/ui/input";
-import { cn } from "shared/lib/utils";
-import { useMutation } from "@tanstack/react-query";
-
-import { CalendarIcon, ClockIcon, TriangleAlertIcon } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import cronstrue from "cronstrue";
-import parser from "cron-parser";
 import { Separator } from "shared/ui/separator";
+import {
+  removeWorkflowSchedule,
+  updateWorkFlowCron,
+} from "src/actions/workflows";
 
+/**
+ * Dialog component for scheduling workflow execution using a cron expression.
+ * Handles validation, feedback, and schedule removal.
+ * @param workflowId - The ID of the workflow
+ * @param workflowCron - The current cron expression (if any)
+ */
 function SchedulerDialog({
   workflowId,
   workflowCron,
@@ -38,7 +43,7 @@ function SchedulerDialog({
   const mutation = useMutation({
     mutationFn: updateWorkFlowCron,
     onSuccess: () => {
-      toast.success("Scheudle updated successfully", { id: "cron" });
+      toast.success("Schedule updated successfully", { id: "cron" });
     },
     onError: (error: any) => {
       toast.error(error.message || "Something went wrong", { id: "cron" });
@@ -48,7 +53,7 @@ function SchedulerDialog({
   const removeScheduleMutation = useMutation({
     mutationFn: removeWorkflowSchedule,
     onSuccess: () => {
-      toast.success("Scheudle removed successfully", { id: "cron" });
+      toast.success("Schedule removed successfully", { id: "cron" });
     },
     onError: (error: any) => {
       toast.error(error.message || "Something went wrong", { id: "cron" });
@@ -62,7 +67,6 @@ function SchedulerDialog({
       setValidCron(true);
       setReadableCron(cronString);
     } catch (error: any) {
-      console.log(error.message);
       setValidCron(false);
     }
   }, [cron]);

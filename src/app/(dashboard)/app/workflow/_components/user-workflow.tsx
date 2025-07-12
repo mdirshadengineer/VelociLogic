@@ -1,11 +1,14 @@
-import { getWorkflowsForUser } from "src/actions/workflows";
 import React from "react";
-
+import { getWorkflowsForUser } from "src/actions/workflows";
 import { AlertCircle, InboxIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "shared/ui/alert";
 import CreateWorkflowDialog from "./create-workflow-dialog";
 import WorkflowCard from "./workflow-card";
 
+/**
+ * Async component to display the user's workflows.
+ * Handles loading, empty, and error states.
+ */
 async function UserWorkflows() {
   const workflows = await getWorkflowsForUser();
   if (!workflows) {

@@ -2,11 +2,11 @@ import Logo from "shared/logo";
 import { ModeToggle } from "shared/theme-toggle";
 import { Separator } from "shared/ui/separator";
 
-export default function WorkflowLayout({
-  children,
-}: {
+interface WorkflowLayoutProps {
   children: React.ReactNode;
-}) {
+}
+
+export default function WorkflowLayout({ children }: WorkflowLayoutProps) {
   return (
     <div className="flex flex-col w-full h-screen">
       {children}

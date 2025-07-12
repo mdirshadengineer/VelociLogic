@@ -19,52 +19,37 @@ export async function runWorkflow(form: {
   flowDefinition?: string;
 }) {
   const { userId } = await auth();
-
-  if (!userId) {
-    throw new Error("Unauthenticated");
-  }
+  if (!userId) throw new Error("You must be signed in to execute a workflow.");
 
   const { workflowId, flowDefinition } = form;
-  if (!workflowId) {
-    throw new Error("workflowId is required");
-  }
+  if (!workflowId) throw new Error("No workflowId provided.");
 
-  const workflow = await prisma.workflow.findUnique({
-    where: {
-      userId,
-      id: workflowId,
-    },
+  // Find the workflow for this user and id (allow both DRAFT and PUBLISHED)
+  const workflow = await prisma.workflow.findFirst({
+    where: { id: workflowId, userId },
   });
-
-  if (!workflow) {
-    throw new Error("Workflow not found");
-  }
+  if (!workflow) throw new Error("Workflow not found or access denied.");
 
   let executionPlan: WorkflowExecutionPlan;
   let workflowDefinition = flowDefinition;
 
-  // Is the execution plan is published then the execution plan will set from workflow definition
   if (workflow.status === WorkflowStatus.PUBLISHED) {
     if (!workflow.executionPlan) {
-      throw new Error("No execution planned found in published workflow");
+      throw new Error("No execution plan found in published workflow.");
     }
     executionPlan = JSON.parse(workflow.executionPlan);
-    workflowDefinition = workflow.definition;
-  } else {
-    // Otherwise generating execution plan from flow-definition passed
+    workflowDefinition = workflow.definition as string;
+  } else if (workflow.status === WorkflowStatus.DRAFT) {
     if (!flowDefinition) {
-      throw new Error("Flow definition is not defined");
+      throw new Error("No flow definition provided for draft workflow.");
     }
-
     const flow = JSON.parse(flowDefinition);
     const result = flowToExecutionPlan(flow.nodes, flow.edges);
-    if (result.error) {
-      throw new Error("Flow definition not valid");
-    }
-    if (!result.executionPlan) {
-      throw new Error("No execution plan generated, Something went wrong");
-    }
+    if (result.error) throw new Error("Flow definition is not valid.");
+    if (!result.executionPlan) throw new Error("No execution plan generated.");
     executionPlan = result.executionPlan;
+  } else {
+    throw new Error("Workflow must be either PUBLISHED or DRAFT to execute.");
   }
 
   const execution = await prisma.workflowExecution.create({
@@ -73,33 +58,26 @@ export async function runWorkflow(form: {
       userId,
       status: WorkflowExecutionStatus.PENDING,
       startedAt: new Date(),
-      trigger: WorkflowExecutionTrigger.MANUAl,
+      trigger: WorkflowExecutionTrigger.MANUAL,
       definition: workflowDefinition,
       phases: {
         create: executionPlan.flatMap((phase) =>
-          phase.nodes.flatMap((node) => {
-            return {
-              userId,
-              status: ExecutionPhaseStatus.CREATED,
-              number: phase.phase,
-              node: JSON.stringify(node),
-              name: TaskRegistry[node.data.type].label,
-            };
-          }),
+          phase.nodes.flatMap((node) => ({
+            userId,
+            status: ExecutionPhaseStatus.CREATED,
+            number: phase.phase,
+            node: JSON.stringify(node),
+            name: TaskRegistry[node.data.type].label,
+          })),
         ),
       },
     },
-    select: {
-      id: true,
-      phases: true,
-    },
+    select: { id: true, phases: true },
   });
 
-  if (!execution) {
-    throw new Error("Workflow execution not created");
-  }
+  if (!execution) throw new Error("Workflow execution could not be created.");
 
-  // This will be a long running function, so just calling it and making it run in background
+  // Start execution in background
   executeWorkflow(execution.id);
 
   redirect(`/app/workflow/runs/${workflowId}/${execution.id}`);

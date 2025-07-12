@@ -2,7 +2,7 @@ import { ExecutionEnviornment } from "src/lib/types";
 import { FillInputTask } from "../task/fill-input";
 
 export async function FillInputExecutor(
-  enviornment: ExecutionEnviornment<typeof FillInputTask>
+  enviornment: ExecutionEnviornment<typeof FillInputTask>,
 ): Promise<boolean> {
   try {
     const selector = enviornment.getInput("Selector");

@@ -1,9 +1,18 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
 import {
   getWorkflowExecutionWithPhases,
   getWorkflowPhaseDetails,
 } from "src/actions/workflows";
+import { datesToDurationString, getPhasesTotalCost } from "src/lib/helper";
+import {
+  ExecutionPhaseStatus,
+  LogLevel,
+  WorkflowExecutionStatus,
+} from "src/lib/types";
 import { Badge } from "shared/ui/badge";
 import { Button } from "shared/ui/button";
 import {
@@ -22,14 +31,11 @@ import {
   TableHeader,
   TableRow,
 } from "shared/ui/table";
-import { datesToDurationString, getPhasesTotalCost } from "src/lib/helper";
-import {
-  ExecutionPhaseStatus,
-  LogLevel,
-  WorkflowExecutionStatus,
-} from "src/lib/types";
-import { useQuery } from "@tanstack/react-query";
-import { formatDistanceToNow } from "date-fns";
+import { Input } from "shared/ui/input";
+import { cn } from "shared/lib/utils";
+import ReactCountUpWrapper from "shared/react-countup-wrapper";
+import PhaseStatusBadge from "./phase-status-badge";
+import { ExecutionLog } from "@prisma/client";
 import {
   CalendarIcon,
   CircleDashedIcon,
@@ -40,56 +46,48 @@ import {
   WorkflowIcon,
 } from "lucide-react";
 
-import { Input } from "shared/ui/input";
-import { cn } from "shared/lib/utils";
-import { ExecutionLog } from "@prisma/client";
-import React, { useEffect, useState } from "react";
-import PhaseStatusBadge from "./phase-status-badge";
-import ReactCountUpWrapper from "shared/react-countup-wrapper";
+// Types
 
 type ExecutionData = Awaited<ReturnType<typeof getWorkflowExecutionWithPhases>>;
 
-function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
-  const [selectedPhase, setSelectedPhase] = useState<string | null>(null);
+interface ExecutionViewerProps {
+  initialData: ExecutionData;
+}
 
+function ExecutionViewer({ initialData }: ExecutionViewerProps) {
+  const [selectedPhase, setSelectedPhase] = useState<string | null>(null);
   const query = useQuery({
     queryKey: ["execution", initialData?.id],
     queryFn: () => getWorkflowExecutionWithPhases(initialData!.id),
     refetchInterval: (q) =>
       q.state.data?.status === WorkflowExecutionStatus.RUNNING ? 1000 : false,
   });
-
   const phaseDetails = useQuery({
     queryKey: ["phaseDetails", selectedPhase, query.data?.status],
     enabled: selectedPhase !== null,
     queryFn: () => getWorkflowPhaseDetails(selectedPhase!),
   });
-
   const isRunning = query.data?.status === WorkflowExecutionStatus.RUNNING;
 
   useEffect(() => {
-    // If status is running auto select the running phase
     const phases = query.data?.phases || [];
     if (isRunning) {
       const phaseToSelect = phases.toSorted((a, b) =>
-        a.startedAt! > b.startedAt! ? -1 : 1
+        a.startedAt! > b.startedAt! ? -1 : 1,
       )[0];
-
       setSelectedPhase(phaseToSelect.id);
       return;
     }
-    // Auto selecting last run phase on reload
     const phaseToSelect = phases.toSorted((a, b) =>
-      a.completedAt! > b.completedAt! ? -1 : 1
+      a.completedAt! > b.completedAt! ? -1 : 1,
     )[0];
     setSelectedPhase(phaseToSelect?.id || "");
   }, [query.data?.phases, isRunning]);
 
   const duration = datesToDurationString(
     query.data?.completedAt,
-    query.data?.startedAt
+    query.data?.startedAt,
   );
-
   const creditsConsumed = getPhasesTotalCost(query.data?.phases || []);
 
   return (
@@ -104,7 +102,7 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
                 <PhaseStatusBadge
                   status={query.data?.status as ExecutionPhaseStatus}
                 />
-                <span className="">{query.data?.status}</span>
+                <span>{query.data?.status}</span>
               </div>
             }
           />
@@ -175,7 +173,7 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
         {!isRunning && !selectedPhase && (
           <div className="flex items-center flex-col gap-2 justify-center h-full w-full">
             <div className="flex flex-col gap-1 text-center">
-              <p className="font-bold"> No phase selected</p>
+              <p className="font-bold">No phase selected</p>
               <p className="text-sm text-muted-foreground">
                 Select a phase to view details
               </p>
@@ -188,20 +186,19 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
               <Badge variant={"outline"} className="space-x-4">
                 <div className="flex gap-1 items-center">
                   <CoinsIcon size={18} className="text-muted-foreground" />
-                  <span> Credits</span>
+                  <span>Credits</span>
                 </div>
-                <span> {phaseDetails.data.creditsConsumed}</span>
+                <span>{phaseDetails.data.creditsConsumed}</span>
               </Badge>
               <Badge variant={"outline"} className="space-x-4">
                 <div className="flex gap-1 items-center">
                   <ClockIcon size={18} className="text-muted-foreground" />
-                  <span> Duration </span>
+                  <span>Duration</span>
                 </div>
                 <span>
-                  {" "}
                   {datesToDurationString(
                     phaseDetails.data.completedAt,
-                    phaseDetails.data.startedAt
+                    phaseDetails.data.startedAt,
                   ) || "-"}
                 </span>
               </Badge>
@@ -209,15 +206,13 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
             <ParameterViewer
               title="Inputs"
               subTitle="Inputs used for this phase"
-              paramsJson={phaseDetails.data.inputs}
+              paramsJson={phaseDetails.data.inputs as string}
             />
-
             <ParameterViewer
               title="Outputs"
               subTitle="Outputs generated by this phase"
-              paramsJson={phaseDetails.data.outputs}
+              paramsJson={phaseDetails.data.outputs as string}
             />
-
             <LogViewer logs={phaseDetails.data.logs} />
           </div>
         )}
@@ -227,6 +222,8 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
 }
 
 export default ExecutionViewer;
+
+// Helper Components
 
 function ExecutionLabel({
   icon,
@@ -261,7 +258,6 @@ function ParameterViewer({
   paramsJson: string | null;
 }) {
   const params = paramsJson ? JSON.parse(paramsJson) : undefined;
-
   return (
     <Card>
       <CardHeader className="rounded-lg rounded-b-none border-b py-4 bg-gray-50 dark:bg-background">
@@ -331,7 +327,7 @@ function LogViewer({ logs }: { logs: ExecutionLog[] | undefined }) {
                     "uppercase text-sm font-bold p-[3px] pl-4",
                     (log.logLevel as LogLevel) === "error" &&
                       "text-destructive",
-                    (log.logLevel as LogLevel) === "info" && "text-primary"
+                    (log.logLevel as LogLevel) === "info" && "text-primary",
                   )}
                 >
                   {log.logLevel}

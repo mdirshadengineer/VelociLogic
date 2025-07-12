@@ -1,6 +1,13 @@
 import { TaskParamType, TaskType, WorkflowTask } from "src/lib/types";
 import { LucideProps, MouseIcon } from "lucide-react";
 
+/**
+ * ScrollToElementTask
+ * Defines a workflow task for scrolling to a DOM element.
+ * - Inputs: Web page instance, selector
+ * - Outputs: Web page instance
+ * - Credits: 1
+ */
 export const ScrollToElementTask = {
   type: TaskType.SCROLL_TO_ELEMENT,
   label: "Scroll to element",

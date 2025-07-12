@@ -1,8 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 
-const prismaClientSingleton = () => {
-  return new PrismaClient();
-};
+/**
+ * Returns a singleton PrismaClient instance.
+ * Ensures a single instance in development to avoid exhausting database connections.
+ */
+const prismaClientSingleton = () => new PrismaClient();
 
 declare const globalThis: {
   prismaGlobal: ReturnType<typeof prismaClientSingleton>;
@@ -12,4 +14,7 @@ const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
 
 export default prisma;
 
-if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;
+// In development, attach Prisma client to global to prevent hot-reload instantiation
+if (process.env.NODE_ENV !== "production") {
+  globalThis.prismaGlobal = prisma;
+}

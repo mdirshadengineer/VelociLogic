@@ -1,35 +1,35 @@
+import React from "react";
 import prisma from "src/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import React from "react";
 import Editor from "../../_components/editor";
 
-async function WorkflowEditorPage({
-  params,
-}: {
+interface WorkflowEditorPageProps {
   params: Promise<{ workflowId: string }>;
-}) {
-  const { workflowId } = await params;
-
-  const { userId } = await auth();
-
-  if (!userId) {
-    return <div>Unauthenticated</div>;
-  }
-
-  const workflow = await prisma.workflow.findUnique({
-    where: {
-      id: workflowId,
-      userId,
-    },
-  });
-
-  //console.log("workflow", workflow);
-
-  if (!workflow) {
-    return <div>Workflow not found</div>;
-  }
-
-  return <Editor workflow={workflow} />;
 }
 
-export default WorkflowEditorPage;
+export default async function WorkflowEditorPage({
+  params,
+}: WorkflowEditorPageProps) {
+  const { workflowId } = await params;
+  const { userId } = await auth();
+
+  if (!userId) return <div>Unauthenticated</div>;
+
+  const workflow = await prisma.workflow.findUnique({
+    where: { id: workflowId, userId },
+    include: { publishedVersion: true },
+  });
+
+  if (!workflow) return <div>Workflow not found</div>;
+
+  const workflowData = workflow.publishedVersion
+    ? { ...workflow, ...workflow.publishedVersion, id: workflow.id }
+    : workflow;
+
+  const versions = await prisma.workflowVersion.findMany({
+    where: { workflowId },
+    orderBy: { version: "desc" },
+  });
+
+  return <Editor workflow={workflowData} versions={versions} />;
+}

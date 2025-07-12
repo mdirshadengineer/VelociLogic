@@ -1,6 +1,17 @@
 "use client";
 
+import { useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { CopyIcon, Layers2Icon, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+
 import { duplicateWorkflow } from "src/actions/workflows";
+import {
+  duplicateWorkflowSchema,
+  DuplicateWorkflowSchemaType,
+} from "src/schema/workflows";
 import CustomDialogHeader from "shared/custom-dialog-header";
 import { Button } from "shared/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "shared/ui/dialog";
@@ -16,17 +27,14 @@ import {
 import { Input } from "shared/ui/input";
 import { Textarea } from "shared/ui/textarea";
 import { cn } from "shared/lib/utils";
-import {
-  duplicateWorkflowSchema,
-  duplicateWorkflowSchemaType,
-} from "src/schema/workflows";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { CopyIcon, Layers2Icon, Loader2 } from "lucide-react";
-import { useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
+/**
+ * Dialog component for duplicating a workflow.
+ * Handles form validation, submission, and feedback.
+ * @param workflowId - ID of the workflow to duplicate
+ * @param name - Default name for the duplicated workflow
+ * @param description - Default description for the duplicated workflow
+ */
 function DuplicateWorkflowDialog({
   workflowId,
   name,
@@ -38,7 +46,7 @@ function DuplicateWorkflowDialog({
 }) {
   const [open, setOpen] = useState(false);
 
-  const form = useForm<duplicateWorkflowSchemaType>({
+  const form = useForm<DuplicateWorkflowSchemaType>({
     resolver: zodResolver(duplicateWorkflowSchema),
     defaultValues: {
       workflowId,
@@ -60,7 +68,7 @@ function DuplicateWorkflowDialog({
   });
 
   const onSubmit = useCallback(
-    (values: duplicateWorkflowSchemaType) => {
+    (values: DuplicateWorkflowSchemaType) => {
       toast.loading("Duplicating workflow...", { id: "duplicate-workflow" });
       mutate(values);
     },
@@ -120,7 +128,7 @@ function DuplicateWorkflowDialog({
                     <FormLabel className="flex gap-1 items-center">
                       Description{" "}
                       <p className="text-xs text-muted-foreground">
-                        (optinoal)
+                        (optional)
                       </p>
                     </FormLabel>
                     <FormControl>

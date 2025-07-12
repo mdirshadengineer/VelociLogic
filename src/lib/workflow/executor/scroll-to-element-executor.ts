@@ -2,7 +2,7 @@ import { ExecutionEnviornment } from "src/lib/types";
 import { ScrollToElementTask } from "../task/scroll-to-element";
 
 export async function ScrollToElementExecutor(
-  enviornment: ExecutionEnviornment<typeof ScrollToElementTask>
+  enviornment: ExecutionEnviornment<typeof ScrollToElementTask>,
 ): Promise<boolean> {
   try {
     const selector = enviornment.getInput("Selector");

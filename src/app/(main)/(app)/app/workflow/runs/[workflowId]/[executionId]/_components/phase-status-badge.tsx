@@ -6,7 +6,11 @@ import {
   Loader2Icon,
 } from "lucide-react";
 
-function PhaseStatusBadge({ status }: { status: ExecutionPhaseStatus }) {
+interface PhaseStatusBadgeProps {
+  status: ExecutionPhaseStatus;
+}
+
+function PhaseStatusBadge({ status }: PhaseStatusBadgeProps) {
   switch (status) {
     case ExecutionPhaseStatus.PENDING:
       return <CircleDashedIcon size={20} className="stroke-muted-foreground" />;
@@ -16,10 +20,8 @@ function PhaseStatusBadge({ status }: { status: ExecutionPhaseStatus }) {
       );
     case ExecutionPhaseStatus.FAILED:
       return <CircleXIcon size={20} className="stroke-destructive" />;
-
     case ExecutionPhaseStatus.COMPLETED:
       return <CircleCheckIcon size={20} className="stroke-green-500" />;
-
     default:
       return <div className="rounded-full">{status}</div>;
   }

@@ -2,7 +2,7 @@ import { ExecutionEnviornment } from "src/lib/types";
 import { DeliverViaWebHookTask } from "../task/deliver-via-webhook";
 
 export async function DeviverViaWebHookExecutor(
-  enviornment: ExecutionEnviornment<typeof DeliverViaWebHookTask>
+  enviornment: ExecutionEnviornment<typeof DeliverViaWebHookTask>,
 ): Promise<boolean> {
   try {
     const targetUrl = enviornment.getInput("Target url");

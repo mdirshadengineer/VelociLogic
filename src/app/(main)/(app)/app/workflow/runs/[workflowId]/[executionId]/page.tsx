@@ -1,30 +1,40 @@
+import React, { Suspense } from "react";
+import prisma from "src/lib/prisma";
 import { getWorkflowExecutionWithPhases } from "src/actions/workflows";
-
 import { Topbar } from "../../../_components/topbar";
 import { Loader2Icon } from "lucide-react";
-import { Suspense } from "react";
 import ExecutionViewer from "./_components/execution-viewer";
+
+interface ExecutionViewerWrapperProps {
+  executionId: string;
+}
 
 async function ExecutionViewerWrapper({
   executionId,
-}: {
-  executionId: string;
-}) {
+}: ExecutionViewerWrapperProps) {
   const workflowExecution = await getWorkflowExecutionWithPhases(executionId);
-
-  if (!workflowExecution) {
-    return <div>No Found</div>;
-  }
-
+  if (!workflowExecution) return <div>Not Found</div>;
   return <ExecutionViewer initialData={workflowExecution} />;
 }
 
-export async function ExecutionViewerPage({
+interface ExecutionViewerPageProps {
+  params: Promise<{ workflowId: string; executionId: string }>;
+}
+
+export default async function ExecutionViewerPage({
   params,
-}: {
-  params: { executionId: string; workflowId: string };
-}) {
+}: ExecutionViewerPageProps) {
   const { workflowId, executionId } = await params;
+  const versions = await prisma.workflowVersion.findMany({
+    where: { workflowId },
+    orderBy: { version: "desc" },
+  });
+  const initialDefinition = versions[0]
+    ? typeof versions[0].definition === "string"
+      ? versions[0].definition
+      : JSON.stringify(versions[0].definition)
+    : "";
+
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden">
       <Topbar
@@ -32,6 +42,8 @@ export async function ExecutionViewerPage({
         title="Workflow run details"
         subtitle={`Execution Id: ${executionId}`}
         hideButtons
+        versions={versions}
+        initialDefinition={initialDefinition}
       />
       <section className="flex h-full overflow-auto">
         <Suspense
@@ -47,5 +59,3 @@ export async function ExecutionViewerPage({
     </div>
   );
 }
-
-export default ExecutionViewerPage;

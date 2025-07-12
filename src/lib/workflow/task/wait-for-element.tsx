@@ -1,6 +1,13 @@
 import { TaskParamType, TaskType, WorkflowTask } from "src/lib/types";
-import { EyeIcon, LucideProps, MousePointerClick } from "lucide-react";
+import { EyeIcon, LucideProps } from "lucide-react";
 
+/**
+ * WaitForElementTask
+ * Defines a workflow task for waiting for a DOM element to appear or disappear.
+ * - Inputs: Web page instance, selector, visibility (visible/hidden)
+ * - Outputs: Web page instance
+ * - Credits: 1
+ */
 export const WaitForElementTask = {
   type: TaskType.WAIT_FOR_ELEMENT,
   label: "Wait For Element",
@@ -25,14 +32,8 @@ export const WaitForElementTask = {
       required: true,
       hideHandle: true,
       options: [
-        {
-          label: "Visible",
-          value: "visible",
-        },
-        {
-          label: "Hidden",
-          value: "hidden",
-        },
+        { label: "Visible", value: "visible" },
+        { label: "Hidden", value: "hidden" },
       ],
     },
   ] as const,

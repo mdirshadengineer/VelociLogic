@@ -1,7 +1,7 @@
 "use client";
 
+import React, { Fragment } from "react";
 import { Button } from "shared/ui/button";
-
 import {
   BaseEdge,
   EdgeLabelRenderer,
@@ -10,12 +10,17 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 
-import React, { Fragment } from "react";
-
+/**
+ * Custom edge component for React Flow that allows deletion via a button on the edge label.
+ * @param props - EdgeProps from React Flow
+ */
 function DeletableEdge(props: EdgeProps) {
   const [edgePath, labelX, labelY] = getSmoothStepPath(props);
-
   const { setEdges } = useReactFlow();
+
+  const handleDelete = () => {
+    setEdges((edges) => edges.filter((edge) => edge.id !== props.id));
+  };
 
   return (
     <Fragment>
@@ -33,12 +38,10 @@ function DeletableEdge(props: EdgeProps) {
           }}
         >
           <Button
-            variant={"outline"}
-            size={"icon"}
+            variant="outline"
+            size="icon"
             className="w-5 h-5 border cursor-pointer rounded-full text-xs leading-none hover:shadow-lg"
-            onClick={() =>
-              setEdges((edges) => edges.filter((edge) => edge.id !== props.id))
-            }
+            onClick={handleDelete}
           >
             x
           </Button>

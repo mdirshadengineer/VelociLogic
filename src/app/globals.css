@@ -1,6 +1,15 @@
+/*
+  globals.css
+  - Imports Tailwind and animation utilities
+  - Defines theme variables for light/dark mode
+  - Sets up base styles and custom keyframes
+  - Utility classes for scrollbars and React Flow
+*/
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Custom theme variables for color and radius */
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -127,6 +136,7 @@
   }
 }
 
+/* Custom keyframes for animated backgrounds and effects */
 @keyframes moveHorizontal {
   0% {
     transform: translateX(-50%) translateY(-10%);
@@ -174,6 +184,7 @@
   }
 }
 
+/* Utility classes */
 .no-visible-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;

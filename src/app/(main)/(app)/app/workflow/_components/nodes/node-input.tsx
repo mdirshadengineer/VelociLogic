@@ -1,23 +1,33 @@
 "use client";
+
+import React from "react";
+import { Handle, Position, useEdges } from "@xyflow/react";
 import { TaskParam } from "src/lib/types";
 import { cn } from "shared/lib/utils";
-import { Handle, Position, useEdges } from "@xyflow/react";
-import React from "react";
 import NodeParamField from "./node-param-field";
 import { ColorForHandle } from "./common";
 import useFlowValidation from "src/hooks/use-flow-validation";
 
-function NodeInput({ input, nodeId }: { input: TaskParam; nodeId: string }) {
+interface NodeInputProps {
+  input: TaskParam;
+  nodeId: string;
+}
+
+/**
+ * Renders an input handle and parameter field for a workflow node.
+ * Highlights errors and disables input if connected.
+ * @param input - The input parameter for the node
+ * @param nodeId - The node's unique ID
+ */
+function NodeInput({ input, nodeId }: NodeInputProps) {
   const edges = useEdges();
   const isConnected = edges.some(
     (edge) => edge.target === nodeId && edge.targetHandle === input.name,
   );
   const { invalidInputs } = useFlowValidation();
-
-  // Checking for error in node and then for input field with error using name
   const hasErrors = invalidInputs
     .find((node) => node.nodeId === nodeId)
-    ?.inputs.find((invalidInput) => invalidInput === input.name);
+    ?.inputs.includes(input.name);
 
   return (
     <div

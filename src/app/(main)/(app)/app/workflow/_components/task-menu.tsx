@@ -1,18 +1,65 @@
-"use client";
-
+// External imports
 import React from "react";
+import { CoinsIcon } from "lucide-react";
+// UI components
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "shared/ui/accordion";
-import { TaskType } from "src/lib/types";
-import { TaskRegistry } from "src/lib/workflow/task/registry";
 import { Button } from "shared/ui/button";
 import { Badge } from "shared/ui/badge";
-import { CoinsIcon } from "lucide-react";
+// Internal types and registries
+import { TaskType } from "src/lib/types";
+import { TaskRegistry } from "src/lib/workflow/task/registry";
 
+/**
+ * TaskMenuButton component props.
+ */
+interface TaskMenuButtonProps {
+  /**
+   * The type of task to display in the menu.
+   */
+  taskType: TaskType;
+}
+
+/**
+ * Renders a draggable button for a specific task type in the task menu.
+ * @param {TaskMenuButtonProps} props - The props for the component.
+ */
+function TaskMenuButton({ taskType }: TaskMenuButtonProps) {
+  const task = TaskRegistry[taskType];
+  /**
+   * Handles the drag start event for the task button.
+   * @param {React.DragEvent} event - The drag event.
+   */
+  const onDragStart = (event: React.DragEvent) => {
+    event.dataTransfer.setData("application/reactflow", taskType);
+    event.dataTransfer.effectAllowed = "move";
+  };
+  return (
+    <Button
+      variant="secondary"
+      className="flex justify-between items-center gap-2 border w-full"
+      draggable
+      onDragStart={onDragStart}
+    >
+      <div className="flex gap-2">
+        <task.icon size={20} />
+        {task.label}
+      </div>
+      <Badge className="gap-2 flex items-center" variant="outline">
+        <CoinsIcon size={16} />
+        {task.credits}
+      </Badge>
+    </Button>
+  );
+}
+
+/**
+ * TaskMenu component displays categorized draggable task buttons for workflow building.
+ */
 function TaskMenu() {
   return (
     <aside className="w-[340px] min-w-[340px] max-w-[340px] border-r-2 border-separate h-full p-2 px-4 overflow-auto">
@@ -64,14 +111,14 @@ function TaskMenu() {
           <AccordionContent className="flex flex-col gap-1">
             <TaskMenuButton taskType={TaskType.WAIT_FOR_ELEMENT} />
           </AccordionContent>
-          <AccordionItem value="results">
-            <AccordionTrigger className="font-bold">
-              Result delivery
-            </AccordionTrigger>
-            <AccordionContent className="flex flex-col gap-1">
-              <TaskMenuButton taskType={TaskType.DELIVER_VIA_WEBHOOK} />
-            </AccordionContent>
-          </AccordionItem>
+        </AccordionItem>
+        <AccordionItem value="results">
+          <AccordionTrigger className="font-bold">
+            Result delivery
+          </AccordionTrigger>
+          <AccordionContent className="flex flex-col gap-1">
+            <TaskMenuButton taskType={TaskType.DELIVER_VIA_WEBHOOK} />
+          </AccordionContent>
         </AccordionItem>
       </Accordion>
     </aside>
@@ -79,28 +126,3 @@ function TaskMenu() {
 }
 
 export default TaskMenu;
-
-function TaskMenuButton({ taskType }: { taskType: TaskType }) {
-  const task = TaskRegistry[taskType];
-  const onDragStart = (event: React.DragEvent) => {
-    event.dataTransfer.setData("application/reactflow", taskType);
-    event.dataTransfer.effectAllowed = "move";
-  };
-  return (
-    <Button
-      variant={"secondary"}
-      className="flex justify-between items-center gap-2 border w-full"
-      draggable
-      onDragStart={onDragStart}
-    >
-      <div className="flex gap-2">
-        <task.icon size={20} />
-        {task.label}
-      </div>
-      <Badge className="gap-2 flex items-center" variant={"outline"}>
-        <CoinsIcon size={16} />
-        {task.credits}
-      </Badge>
-    </Button>
-  );
-}

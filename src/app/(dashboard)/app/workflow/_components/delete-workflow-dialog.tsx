@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import {
   AlertDialog,
@@ -13,9 +15,7 @@ import {
   AlertDialogTrigger,
 } from "shared/ui/alert-dialog";
 import { Input } from "shared/ui/input";
-import { useMutation } from "@tanstack/react-query";
 import { deleteWorkflow } from "src/actions/workflows";
-import { toast } from "sonner";
 
 interface Props {
   open: boolean;
@@ -24,6 +24,14 @@ interface Props {
   workflowId: string;
 }
 
+/**
+ * Dialog component for confirming and deleting a workflow.
+ * Requires the user to type the workflow name to confirm deletion.
+ * @param open - Whether the dialog is open
+ * @param setOpen - Function to set dialog open state
+ * @param workflowName - Name of the workflow to confirm deletion
+ * @param workflowId - ID of the workflow to delete
+ */
 function DeleteWorkflowDialog({
   open,
   setOpen,

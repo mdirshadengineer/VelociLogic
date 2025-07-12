@@ -1,5 +1,7 @@
-// Shows the dashboard configured for the user
-// Note if the user is admin he should see more details
+/**
+ * Dashboard page for the user.
+ * If the user is an admin, more details should be shown.
+ */
 export default function App() {
   return (
     <main>

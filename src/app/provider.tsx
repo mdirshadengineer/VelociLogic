@@ -1,17 +1,16 @@
 "use client";
 
-import type { FC, ReactNode } from "react";
-import { useState } from "react";
+import { FC, ReactNode, useState } from "react";
 import { ThemeProvider } from "src/theme/theme-provider";
 import NextTopLoader from "nextjs-toploader";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-type RootProvidersProps = {
+interface RootProvidersProps {
   children: ReactNode;
-};
+}
 
-const RootProviders: FC<RootProvidersProps> = (props) => {
-  const [queryClient, setQueryClient] = useState(() => new QueryClient());
+const RootProviders: FC<RootProvidersProps> = ({ children }) => {
+  const [queryClient] = useState(() => new QueryClient());
   return (
     <QueryClientProvider client={queryClient}>
       <NextTopLoader color="#10b981" showSpinner={false} />
@@ -21,7 +20,7 @@ const RootProviders: FC<RootProvidersProps> = (props) => {
         enableSystem
         disableTransitionOnChange
       >
-        {props.children}
+        {children}
       </ThemeProvider>
     </QueryClientProvider>
   );

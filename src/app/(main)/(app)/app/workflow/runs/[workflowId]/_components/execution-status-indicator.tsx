@@ -1,25 +1,22 @@
+import React from "react";
 import { WorkflowExecutionStatus } from "src/lib/types";
 import { cn } from "shared/lib/utils";
-import React from "react";
 
-const indicatorsColors: Record<WorkflowExecutionStatus, string> = {
+const indicatorColors: Record<WorkflowExecutionStatus, string> = {
   COMPLETED: "bg-emerald-600",
   PENDING: "bg-slate-400",
   RUNNING: "bg-yellow-400",
   FAILED: "bg-red-400",
 };
 
-function ExecutionStatusIndicator({
-  status,
-}: {
+interface ExecutionStatusIndicatorProps {
   status: WorkflowExecutionStatus;
-}) {
+}
+
+function ExecutionStatusIndicator({ status }: ExecutionStatusIndicatorProps) {
   return (
     <div
-      className={cn(
-        "w-2 h-2 rounded-full bg-red-600",
-        indicatorsColors[status]
-      )}
+      className={cn("w-2 h-2 rounded-full bg-red-600", indicatorColors[status])}
     />
   );
 }
@@ -33,11 +30,11 @@ const labelColors: Record<WorkflowExecutionStatus, string> = {
   FAILED: "text-red-400",
 };
 
-export function ExecutionStatusLabel({
-  status,
-}: {
+interface ExecutionStatusLabelProps {
   status: WorkflowExecutionStatus;
-}) {
+}
+
+export function ExecutionStatusLabel({ status }: ExecutionStatusLabelProps) {
   return (
     <span className={cn("lowercase font-semibold", labelColors[status])}>
       {status}

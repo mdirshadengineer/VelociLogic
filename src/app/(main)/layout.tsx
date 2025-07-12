@@ -1,10 +1,10 @@
 import React from "react";
 
-export default function MainAppLayout({
-  children,
-}: {
+interface MainAppLayoutProps {
   children: React.ReactNode;
-}) {
+}
+
+export default function MainAppLayout({ children }: MainAppLayoutProps) {
   return (
     <div id="main-app-layout">
       {/* Global Header */}

@@ -2,7 +2,7 @@ import { ExecutionEnviornment } from "src/lib/types";
 import { ClickElementTask } from "../task/click-element";
 
 export async function ClickElementExecutor(
-  enviornment: ExecutionEnviornment<typeof ClickElementTask>
+  enviornment: ExecutionEnviornment<typeof ClickElementTask>,
 ): Promise<boolean> {
   try {
     const selector = enviornment.getInput("Selector");

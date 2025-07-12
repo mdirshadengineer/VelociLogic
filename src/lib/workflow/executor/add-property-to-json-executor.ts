@@ -2,7 +2,7 @@ import { ExecutionEnviornment } from "src/lib/types";
 import { AddPropertyToJsonTask } from "../task/add-property-to-json";
 
 export async function AddPropertyToJsonExecutor(
-  enviornment: ExecutionEnviornment<typeof AddPropertyToJsonTask>
+  enviornment: ExecutionEnviornment<typeof AddPropertyToJsonTask>,
 ): Promise<boolean> {
   try {
     const jsonData = enviornment.getInput("JSON");

@@ -8,7 +8,10 @@ import {
 } from "../types";
 import { TaskRegistry } from "./task/registry";
 
-type flowToExecutionPlan = {
+/**
+ * Result type for flowToExecutionPlan.
+ */
+type FlowToExecutionPlanResult = {
   executionPlan?: WorkflowExecutionPlan;
   error?: {
     type: FlowToExecutionPlanValidationError;
@@ -16,30 +19,33 @@ type flowToExecutionPlan = {
   };
 };
 
+/**
+ * Generates an execution plan for a workflow graph.
+ * Validates entry point and required inputs for each node.
+ * @param nodes - Array of AppNode
+ * @param edges - Array of Edge
+ * @returns Execution plan or error with invalid nodes/inputs
+ */
 export function flowToExecutionPlan(
   nodes: AppNode[],
   edges: Edge[],
-): flowToExecutionPlan {
+): FlowToExecutionPlanResult {
   const entryPoint = nodes.find(
     (node) => TaskRegistry[node.data.type].isEntryPoint,
   );
-
   if (!entryPoint) {
     return {
       error: { type: FlowToExecutionPlanValidationError.NO_ENTRY },
     };
   }
-
   const inputsWithErrors: AppNodeMissingInputs[] = [];
   const planned = new Set<string>();
-
   const executionPlan: WorkflowExecutionPlan = [
     {
       phase: 1,
       nodes: [entryPoint],
     },
   ];
-
   planned.add(entryPoint.id);
   const enpInvalidInput = getInvalidInputs(entryPoint, edges, planned);
   if (enpInvalidInput.length > 0) {
@@ -56,33 +62,25 @@ export function flowToExecutionPlan(
     const nextPhase: WorkflowExecutionPlanPhase = { phase, nodes: [] };
     for (const currentNode of nodes) {
       if (planned.has(currentNode.id)) {
-        // Node is already planned for execution
         continue;
       }
-
       const invalidInputs = getInvalidInputs(currentNode, edges, planned);
-
       if (invalidInputs?.length > 0) {
-        // If has invalid inputs i.e. Node input is blank, then cheking for if node has input from previous node
         const incomers = getIncomers(currentNode, nodes, edges);
-
-        // Checking if the incomer node is already planned?
         if (incomers.every((incomer) => planned.has(incomer.id))) {
-          // If this hits it means all the incoming nodes are planned and thus the the current-node has invalid inputs
-          console.log("Invalid Inputs", currentNode.id, invalidInputs);
+          // All incomers are planned, so this node has invalid inputs
           inputsWithErrors.push({
             nodeId: currentNode.id,
             inputs: invalidInputs,
           });
         } else {
-          // Since all the incomers are not planned, skipping the check
+          // Not all incomers are planned, skip for now
           continue;
         }
       }
-      // Here node is valid
+      // Node is valid
       nextPhase.nodes.push(currentNode);
     }
-
     for (const node of nextPhase.nodes) {
       planned.add(node.id);
     }
@@ -96,50 +94,39 @@ export function flowToExecutionPlan(
       },
     };
   }
-
   return { executionPlan };
 }
 
+/**
+ * Returns a list of input names that are invalid (missing or not connected).
+ * @param node - The node to check
+ * @param edges - All edges in the graph
+ * @param planned - Set of planned node IDs
+ * @returns Array of invalid input names
+ */
 function getInvalidInputs(node: AppNode, edges: Edge[], planned: Set<string>) {
-  const invalidInputs = [];
-
+  const invalidInputs: string[] = [];
   const inputs = TaskRegistry[node.data.type].inputs;
-
   for (const input of inputs) {
     const inputValue = node.data.inputs[input.name];
     const inputValueProvided = inputValue?.length > 0;
-
     if (inputValueProvided) {
-      // This input has value entered by user
       continue;
     }
-
-    // If value is not provided by user, then check if there is ouput link i.e. this input incoming data from other node
-
-    // Checking all the incoming connections to the node
+    // Check if input is provided by an incoming edge
     const incomingEdges = edges.filter((edge) => edge.target === node.id);
-
-    // Checking if input of the incomign node is connected to the current input
     const inputLinkedToOutput = incomingEdges.find(
       (edge) => edge.targetHandle === input.name,
     );
-
     const requiredInputProvidedbyVisitedOutput =
       input.required &&
       inputLinkedToOutput &&
       planned.has(inputLinkedToOutput.source);
-
     if (requiredInputProvidedbyVisitedOutput) {
-      // The input is required and value is provided by the task that is already planned
       continue;
     } else if (!input.required) {
-      // If the input is not required but there is output linked to it.
-
-      // Then checking the output is already planned i.e the output doesn't depends on this input
       if (!inputLinkedToOutput) continue;
-
       if (inputLinkedToOutput && planned.has(inputLinkedToOutput.source)) {
-        // The output is providing a value to input.
         continue;
       }
     }
@@ -148,18 +135,22 @@ function getInvalidInputs(node: AppNode, edges: Edge[], planned: Set<string>) {
   return invalidInputs;
 }
 
-// DOCS:REPO:CODE
+/**
+ * Returns all nodes that are incomers (source nodes) for the given node.
+ * @param node - The node to check
+ * @param nodes - All nodes in the graph
+ * @param edges - All edges in the graph
+ * @returns Array of incomer nodes
+ */
 function getIncomers(node: AppNode, nodes: AppNode[], edges: Edge[]) {
   if (!node.id) {
     return [];
   }
-
-  const incomersIds = new Set();
+  const incomersIds = new Set<string>();
   edges.forEach((edge) => {
     if (edge.target === node.id) {
       incomersIds.add(edge.source);
     }
   });
-
   return nodes.filter((n) => incomersIds.has(n.id));
 }

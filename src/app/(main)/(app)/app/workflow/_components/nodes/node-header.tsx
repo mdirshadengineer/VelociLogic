@@ -1,29 +1,33 @@
 "use client";
 
+import React, { Fragment } from "react";
+import { useReactFlow } from "@xyflow/react";
 import { Badge } from "shared/ui/badge";
 import { Button } from "shared/ui/button";
+import { Coins, CopyIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
 import { AppNode, TaskType } from "src/lib/types";
 import { createWorkflowNode } from "src/lib/workflow/create-workflow-node";
 import { TaskRegistry } from "src/lib/workflow/task/registry";
-import { useReactFlow } from "@xyflow/react";
-import { Coins, CopyIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
-import React, { Fragment } from "react";
 
-function NodeHeader({
-  taskType,
-  nodeId,
-}: {
+interface NodeHeaderProps {
   taskType: TaskType;
   nodeId: string;
-}) {
-  const task = TaskRegistry[taskType];
+}
 
+/**
+ * Header component for a workflow node, showing icon, label, credits, and actions.
+ * Allows node deletion, duplication, and drag handle.
+ * @param taskType - The type of the task for the node
+ * @param nodeId - The node's unique ID
+ */
+function NodeHeader({ taskType, nodeId }: NodeHeaderProps) {
+  const task = TaskRegistry[taskType];
   const { deleteElements, getNode, addNodes } = useReactFlow();
 
   const copyNode = () => {
     const node = getNode(nodeId) as AppNode;
     const newX = node.position.x;
-    const newY = node.position.y + node.measured?.height! + 20;
+    const newY = node.position.y + (node.measured?.height ?? 0) + 20;
     const newNode = createWorkflowNode(node.data.type, { x: newX, y: newY });
     addNodes([newNode]);
   };
@@ -44,24 +48,20 @@ function NodeHeader({
           {!task.isEntryPoint && (
             <Fragment>
               <Button
-                variant={"ghost"}
-                size={"icon"}
-                onClick={() =>
-                  deleteElements({
-                    nodes: [{ id: nodeId }],
-                  })
-                }
+                variant="ghost"
+                size="icon"
+                onClick={() => deleteElements({ nodes: [{ id: nodeId }] })}
               >
                 <TrashIcon size={12} />
               </Button>
-              <Button variant={"ghost"} size={"icon"} onClick={copyNode}>
+              <Button variant="ghost" size="icon" onClick={copyNode}>
                 <CopyIcon size={12} />
               </Button>
             </Fragment>
           )}
           <Button
-            variant={"ghost"}
-            size={"icon"}
+            variant="ghost"
+            size="icon"
             className="drag-handle cursor-grab"
           >
             <GripVerticalIcon size={20} />
