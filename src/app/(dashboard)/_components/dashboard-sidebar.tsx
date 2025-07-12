@@ -3,11 +3,12 @@
 import React, { useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "src/components/ui/sidebar";
 import {
-  IconArrowLeft,
   IconBrandTabler,
   IconSettings,
-  IconUserBolt,
-  Icon3dCubeSphereOff,
+  IconBuildingStore,
+  IconProgressHelp,
+  IconJumpRope,
+  IconLogout
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { cn } from "shared/lib/utils";
@@ -33,14 +34,21 @@ export function DashboardAppLayout({
       label: "Workflow",
       href: "/app/workflow",
       icon: (
-        <Icon3dCubeSphereOff className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconJumpRope className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
-      label: "Profile",
+      label: "Marketplace",
       href: "#",
       icon: (
-        <IconUserBolt className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconBuildingStore className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      ),
+    },
+    {
+      label: "Resources",
+      href: "#",
+      icon: (
+        <IconProgressHelp className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
@@ -50,20 +58,13 @@ export function DashboardAppLayout({
         <IconSettings className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
-    {
-      label: "Logout",
-      href: "#",
-      icon: (
-        <IconArrowLeft className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-      ),
-    },
   ];
   const [open, setOpen] = useState(false);
   return (
     <div
       className={cn(
         "flex w-screen flex-1 flex-col overflow-hidden rounded-md border border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800",
-        "h-screen",
+        "h-screen"
       )}
     >
       <Sidebar open={open} setOpen={setOpen} animate={false}>
@@ -72,18 +73,18 @@ export function DashboardAppLayout({
             <Logo />
             <div className="mt-8 flex flex-col gap-2">
               {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
+                <SidebarLink key={idx} link={link} className="px-2" />
               ))}
             </div>
           </div>
           <div>
-            <SidebarLink
+            <SidebarLink className="px-2 ring-1 ring-neutral-200 dark:ring-neutral-700 rounded-md"
               link={{
                 label: "Md Irshad",
                 href: "#",
                 icon: (
                   <img
-                    src="https://assets.aceternity.com/manu.png"
+                    src="https://avatars.githubusercontent.com/u/191547746?v=4"
                     className="h-7 w-7 shrink-0 rounded-full"
                     width={50}
                     height={50}
@@ -92,6 +93,7 @@ export function DashboardAppLayout({
                 ),
               }}
             />
+            {/* <IconLogout className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200 mt-2 cursor-pointer" /> */}
           </div>
         </SidebarBody>
       </Sidebar>

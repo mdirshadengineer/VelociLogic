@@ -4,7 +4,7 @@ import { symmetricEncrypt } from "src/lib/credential";
 import prisma from "src/lib/prisma";
 import {
   createCredentialSchema,
-  createCredentialSchemaType,
+  CreateCredentialSchemaType,
 } from "src/schema/credential";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
@@ -26,7 +26,7 @@ export async function getUserCredentials() {
   });
 }
 
-export async function createCredential(form: createCredentialSchemaType) {
+export async function createCredential(form: CreateCredentialSchemaType) {
   const { success, data } = createCredentialSchema.safeParse(form);
 
   if (!success) {
