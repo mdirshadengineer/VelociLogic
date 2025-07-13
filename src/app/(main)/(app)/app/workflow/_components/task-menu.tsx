@@ -120,6 +120,13 @@ function TaskMenu() {
             <TaskMenuButton taskType={TaskType.DELIVER_VIA_WEBHOOK} />
           </AccordionContent>
         </AccordionItem>
+        <AccordionItem value="advanced">
+          <AccordionTrigger className="font-bold">Advanced</AccordionTrigger>
+          <AccordionContent className="flex flex-col gap-1">
+            <TaskMenuButton taskType={TaskType.EXECUTE_JAVASCRIPT} />
+            <TaskMenuButton taskType={TaskType.CODE_BLOCK} />
+          </AccordionContent>
+        </AccordionItem>
       </Accordion>
     </aside>
   );

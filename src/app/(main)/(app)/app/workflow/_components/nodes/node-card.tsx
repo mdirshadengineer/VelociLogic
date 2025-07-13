@@ -39,7 +39,7 @@ function NodeCard({ nodeId, children, isSelected }: NodeCardProps) {
     <div
       onDoubleClick={centerNode}
       className={cn(
-        "rounded-md cursor-pointer bg-background border-2 border-separate w-[420px] text-xs gap-1 flex-col",
+        "cursor-pointer bg-background border-2 border-separate w-[420px] text-xs gap-1 flex-col",
         isSelected && "border-primary",
         hasInvalidInputs && "border-destructive border-2",
       )}

@@ -1,5 +1,5 @@
 // Task registry for mapping TaskType to their implementation and metadata.
-import { TaskType, WorkflowTask } from "src/lib/types";
+import { TaskParamType, TaskType, WorkflowTask } from "src/lib/types";
 import { LaunchBrowserTask } from "./launch-browser";
 import { PageToHtmlTask } from "./page-to-html";
 import { ExtractTextFromElementTask } from "./extract-text-from-element";
@@ -12,6 +12,7 @@ import { ReadPropertyFromJsonTask } from "./read-property-from-json";
 import { AddPropertyToJsonTask } from "./add-property-to-json";
 import { NavigateUrlTask } from "./navigate-url";
 import { ScrollToElementTask } from "./scroll-to-element";
+import { CodeIcon } from "lucide-react";
 
 /**
  * Registry mapping each TaskType to its corresponding WorkflowTask implementation.
@@ -34,4 +35,34 @@ export const TaskRegistry: Registry = {
   ADD_PROPERTY_TO_JSON: AddPropertyToJsonTask,
   NAVIGATE_URL: NavigateUrlTask,
   SCROLL_TO_ELEMENT: ScrollToElementTask,
+  EXECUTE_JAVASCRIPT: {
+    type: TaskType.EXECUTE_JAVASCRIPT,
+    label: "Execute JavaScript",
+    icon: (props) => <CodeIcon {...props} />,
+    isEntryPoint: false,
+    inputs: [
+      {
+        name: "JavaScript Code",
+        type: TaskParamType.STRING,
+        required: true,
+      },
+    ],
+    outputs: [],
+    credits: 1,
+  },
+  CODE_BLOCK: {
+    type: TaskType.CODE_BLOCK,
+    label: "Code Block",
+    icon: (props) => <CodeIcon {...props} />,
+    isEntryPoint: false,
+    inputs: [
+      {
+        name: "Code",
+        type: TaskParamType.STRING,
+        required: true,
+      },
+    ],
+    outputs: [],
+    credits: 1,
+  },
 };

@@ -7,15 +7,17 @@ import {
   EdgeLabelRenderer,
   EdgeProps,
   getSmoothStepPath,
+  getBezierPath,
   useReactFlow,
 } from "@xyflow/react";
+import { IconCircleDashedX } from "@tabler/icons-react";
 
 /**
  * Custom edge component for React Flow that allows deletion via a button on the edge label.
  * @param props - EdgeProps from React Flow
  */
 function DeletableEdge(props: EdgeProps) {
-  const [edgePath, labelX, labelY] = getSmoothStepPath(props);
+  const [edgePath, labelX, labelY] = getBezierPath(props);
   const { setEdges } = useReactFlow();
 
   const handleDelete = () => {
@@ -35,15 +37,20 @@ function DeletableEdge(props: EdgeProps) {
             position: "absolute",
             transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
             pointerEvents: "all",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "32px",
+            height: "32px",
           }}
         >
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
-            className="w-5 h-5 border cursor-pointer rounded-full text-xs leading-none hover:shadow-lg"
+            className="w-5 h-5 cursor-pointer rounded-full text-xs leading-none hover:shadow-lg flex items-center justify-center"
             onClick={handleDelete}
           >
-            x
+            <IconCircleDashedX size={48} className="" />
           </Button>
         </div>
       </EdgeLabelRenderer>

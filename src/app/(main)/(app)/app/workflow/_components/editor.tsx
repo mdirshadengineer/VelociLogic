@@ -5,9 +5,9 @@ import { ReactFlowProvider } from "@xyflow/react";
 import { Workflow, WorkflowVersion } from "@prisma/client";
 import { Topbar } from "./topbar";
 import FlowEditor from "./workflow-editor";
-import TaskMenu from "./task-menu";
 import { FlowValidationContextProvider } from "src/context/flow-validation-context";
 import { WorkflowStatus } from "src/lib/types";
+import TaskMenu from "./task-menu";
 
 interface EditorProps {
   workflow: Workflow;

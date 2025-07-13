@@ -4,7 +4,7 @@ import React, { Fragment } from "react";
 import { useReactFlow } from "@xyflow/react";
 import { Badge } from "shared/ui/badge";
 import { Button } from "shared/ui/button";
-import { Coins, CopyIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
+import { Coins, CopyIcon, GripVerticalIcon, TrashIcon, PlayIcon } from "lucide-react";
 import { AppNode, TaskType } from "src/lib/types";
 import { createWorkflowNode } from "src/lib/workflow/create-workflow-node";
 import { TaskRegistry } from "src/lib/workflow/task/registry";
@@ -34,7 +34,9 @@ function NodeHeader({ taskType, nodeId }: NodeHeaderProps) {
 
   return (
     <div className="flex items-center gap-2 p-2">
-      <task.icon size={16} />
+      <Badge className="flex py-2 items-center gap-1 border-none bg-transparent ring ring-gray-200">
+        <task.icon size={16} />
+      </Badge>
       <div className="flex items-center justify-between w-full gap-1">
         <p className="text-xs font-bold uppercase text-muted-foreground">
           {task.label}
@@ -57,8 +59,18 @@ function NodeHeader({ taskType, nodeId }: NodeHeaderProps) {
               <Button variant="ghost" size="icon" onClick={copyNode}>
                 <CopyIcon size={12} />
               </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {/* TODO: Implement test execution logic for nodeId */}}
+                title="Test execution"
+              >
+                <PlayIcon size={12} />
+              </Button>
             </Fragment>
           )}
+          
+          {/* Drag handle for reordering nodes */}
           <Button
             variant="ghost"
             size="icon"

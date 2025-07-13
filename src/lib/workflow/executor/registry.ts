@@ -18,7 +18,7 @@ import { WaitForElementExecutor } from "./wait-for-element-executor";
  * Type for executor functions, which run a workflow task in a given environment.
  */
 type ExecutorFunction<T extends WorkflowTask> = (
-  enviornment: ExecutionEnviornment<T>,
+  enviornment: ExecutionEnviornment<T>
 ) => Promise<boolean>;
 
 /**
@@ -42,4 +42,12 @@ export const ExecutorRegistry: RegistryType = {
   READ_PROPERTY_FROM_JSON: ReadPropertyFromJsonExecutor,
   NAVIGATE_URL: NavigateUrlExecutor,
   SCROLL_TO_ELEMENT: ScrollToElementExecutor,
+  EXECUTE_JAVASCRIPT: async (enviornment) => {
+    enviornment.log.error("Execute JavaScript task is not implemented yet");
+    return false;
+  },
+  CODE_BLOCK: async (enviornment) => {
+    enviornment.log.error("Code Block task is not implemented yet");
+    return false;
+  },
 };
