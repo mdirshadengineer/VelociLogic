@@ -26,13 +26,23 @@ export function DashboardAppLayout({
     {
       label: "Dashboard",
       href: "/app",
+      newPage: false,
       icon: (
         <IconBrandTabler className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
-      label: "Workflow",
+      label: "Studio",
+      href: "/app/studio",
+      newPage: false,
+      icon: (
+        <IconJumpRope className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      ),
+    },
+    {
+      label: "Process Orchestration",
       href: "/app/workflow",
+      newPage: false,
       icon: (
         <IconJumpRope className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
@@ -40,6 +50,7 @@ export function DashboardAppLayout({
     {
       label: "Marketplace",
       href: "#",
+      newPage: false,
       icon: (
         <IconBuildingStore className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
@@ -47,6 +58,7 @@ export function DashboardAppLayout({
     {
       label: "Resources",
       href: "#",
+      newPage: false,
       icon: (
         <IconProgressHelp className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
@@ -54,6 +66,7 @@ export function DashboardAppLayout({
     {
       label: "Settings",
       href: "#",
+      newPage: false,
       icon: (
         <IconSettings className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
@@ -73,7 +86,7 @@ export function DashboardAppLayout({
             <Logo />
             <div className="mt-8 flex flex-col gap-2">
               {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} className="px-2" />
+                <SidebarLink key={idx} link={link} className="px-2" newPage={link.newPage} />
               ))}
             </div>
           </div>

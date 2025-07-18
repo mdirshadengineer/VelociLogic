@@ -1,0 +1,24 @@
+export type PlatformModuleRegistry = {
+  id: string;
+  name: string;
+  description: string;
+  version: string;
+  dependencies: string[];
+  iconUrl?: string;
+  homepageUrl?: string;
+  routePath?: string;
+  permissions?: string[];
+  isEnabled?: boolean;
+  isPublic?: boolean;
+  isExperimental?: boolean;
+  isBeta?: boolean;
+  isDeprecated?: boolean;
+  isHidden?: boolean;
+  isInternal?: boolean;
+  isThirdParty?: boolean;
+  isCore?: boolean;
+  isCustom?: boolean;
+  isCommunity?: boolean;
+  isEnterprise?: boolean;
+  isPro?: boolean;
+};

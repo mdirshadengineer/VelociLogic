@@ -157,10 +157,12 @@ export const MobileSidebar = ({
 export const SidebarLink = ({
   link,
   className,
+  newPage = false,
   ...props
 }: {
   link: Links;
   className?: string;
+  newPage?: boolean;
 }) => {
   const { open, animate } = useSidebar();
   return (
@@ -170,6 +172,8 @@ export const SidebarLink = ({
         "flex items-center justify-start gap-2  group/sidebar py-2",
         className
       )}
+      target={newPage ? "_blank" : "_self"}
+      rel={newPage ? "noopener noreferrer" : undefined}
       {...props}
     >
       {link.icon}
