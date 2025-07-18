@@ -1,7 +1,10 @@
 export default function StudioHeader() {
   return (
     <header>
-      {/* Placeholder to have header here */}
+      {/* App Logo retrieve from the system properties */}
+      <nav>
+
+      </nav>
     </header>
   )
 }

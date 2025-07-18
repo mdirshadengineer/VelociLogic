@@ -12,6 +12,7 @@ export const modulesRegistry = [
         (m) => m.ProcessOrchestrationModule
       ),
     loadData: (id: string) => {
+      console.log("Loading data for process orchestration", id);
       return "a2d8a232-e31c-4709-af41-cbcc0bb775af"
     }
   },

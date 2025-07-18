@@ -30,6 +30,7 @@ export default async function WorkflowEditorPage({
     where: { workflowId },
     orderBy: { version: "desc" },
   });
+  console.log("Workflow Versions:", versions);
 
   return <Editor workflow={workflowData} versions={versions} />;
 }

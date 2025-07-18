@@ -5,6 +5,9 @@ export function ProcessOrchestrationModule({
   params: { module: string; entityId: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  console.log("Process Orchestration Module Params:", params);
+  console.log("Search Params:", searchParams);
+
   return (
     <div>
       <h1>Process Orchestration Module</h1>

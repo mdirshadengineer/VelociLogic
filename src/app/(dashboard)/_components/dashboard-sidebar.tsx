@@ -8,7 +8,8 @@ import {
   IconBuildingStore,
   IconProgressHelp,
   IconJumpRope,
-  IconLogout
+  IconLogout,
+  IconBrandVisualStudio
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { cn } from "shared/lib/utils";
@@ -36,7 +37,7 @@ export function DashboardAppLayout({
       href: "/app/studio",
       newPage: false,
       icon: (
-        <IconJumpRope className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconBrandVisualStudio className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
@@ -80,7 +81,7 @@ export function DashboardAppLayout({
         "h-screen"
       )}
     >
-      <Sidebar open={open} setOpen={setOpen} animate={false}>
+      <Sidebar open={open} setOpen={setOpen} animate={true}>
         <SidebarBody className="justify-between gap-10">
           <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
             <Logo />
@@ -91,7 +92,7 @@ export function DashboardAppLayout({
             </div>
           </div>
           <div>
-            <SidebarLink className="px-2 ring-1 ring-neutral-200 dark:ring-neutral-700 rounded-md"
+            <SidebarLink className="ring-1 px-4 py-4 ring-neutral-200 dark:ring-neutral-700 rounded-md"
               link={{
                 label: "Md Irshad",
                 href: "#",
